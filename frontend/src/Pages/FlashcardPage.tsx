@@ -35,6 +35,7 @@ export default function CardDisplayPage() {
 
 {/* defining prop type to pass into FlipCardComponent*/}
 interface FlipCardObject {
+    key: string;
     frontContent: string;
     backContent: string;
 };
@@ -42,7 +43,9 @@ interface FlipCardObject {
     
  
 {/*Mock data to simulate multiple data being passed from creation page*/}
-const md: FlipCardObject[] = [{frontContent: 'front! finally got ts to work gng, I fr feel like a god writing whatever i want on here u herd?', backContent: 'back as in backshots? lmk and hmu u feel?'},{frontContent: 'wassup', backContent: 'nothing much, wbu? email me at skibiddiToilet6967@gmail123.com to write about ur day :)'},{frontContent:'PLEASE SPEED I NEED THIS', backContent:'MY MOM IS KINDA HOMELESS'}];
+const md: FlipCardObject[] = [{frontContent: 'front! finally got ts to work gng, I fr feel like a god writing whatever i want on here u herd?', backContent: 'back as in backshots? lmk and hmu u feel?',key:'1'},
+                              {frontContent: 'wassup', backContent: 'nothing much, wbu? email me at skibiddiToilet6967@gmail123.com to write about ur day :)',key:'2'},
+                              {frontContent:'PLEASE SPEED I NEED THIS', backContent:'MY MOM IS KINDA HOMELESS',key:'3'}];
 
 
 {/*Generate a flip card from given front and back data */}
