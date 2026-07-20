@@ -105,7 +105,7 @@ function Create(){
                                     value={choice}
                                     onChange = {(e) => {
                                         const newQuestions = [...questions]
-                                        newQuestions[index].choices[choiceIndex] = choice
+                                        newQuestions[index].choices[choiceIndex] = e.target.value
                                         setQuestions(newQuestions)
                                     }}
                                 />
