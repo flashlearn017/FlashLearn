@@ -20,7 +20,7 @@ function Create(){
         for(let i = 0; i < count; i++){
             newQuestions.push({
                 question : "",
-                answer : "",
+                correctChoice : 0,
                 choices : ["", "", "", ""],
             })
         }
@@ -34,27 +34,27 @@ function Create(){
             <div className="flex justify-center text-5xl my-4"> Create your test </div>
             <div className="flex justify-center items-center flex-col text-xl gap-1">
                 <input
-                type="number"
-                placeholder="Number of questions"
-                value={numQuestions}
-                onChange={(e)=>setNumQuestions(e.target.value)}
+                    type="number"
+                    placeholder="Number of questions"
+                    value={numQuestions}
+                    onChange={(e)=>setNumQuestions(e.target.value)}
                 />
 
                 <div>
                     <label> Do you want this test to be timed? </label>
                     <input
-                    type="checkbox"
-                    checked={timedTest}
-                    onChange={(e)=>{setTimedTest(e.target.checked)}}
+                        type="checkbox"
+                        checked={timedTest}
+                        onChange={(e)=>{setTimedTest(e.target.checked)}}
                     />
                 </div>
 
                 {timedTest &&(
                     <input
-                    type="number"
-                    placeholder="Test Time in Minutes"
-                    value={testTime}
-                    onChange={(e)=>{setTestTime(e.target.value)}}
+                        type="number"
+                        placeholder="Test Time in Minutes"
+                        value={testTime}
+                        onChange={(e)=>{setTestTime(e.target.value)}}
                     />
                 )}
 
@@ -73,15 +73,54 @@ function Create(){
                             Question {index + 1}
                         </div>
 
-                        <input
-                        type="text"
-                        placeholder="Enter Question"
-                        value={q.question}
-                        onChange={(e)=>{
+                        <div>
+                            <input
+                                type="text"
+                                placeholder="Enter Question"
+                                value={q.question}
+                                onChange={(e)=>{
+                                    const newQuestion = [...questions]
+                                    newQuestion[index].question = e.target.value
+                                    setQuestions(newQuestion)
+                                }}>
+                            </input>
+                        </div>
+                        
+                        {q.choices.map((choice, choiceIndex) => (
+                            <div key={choiceIndex}>
+                                <input
+                                    type="radio"
+                                    name={`question-${index}`}
+                                    checked={q.correctChoice==choiceIndex}
+                                    onChange={() => {
+                                        const newQuestions = [...questions]
+                                        newQuestions[index].correctChoice = choiceIndex
+                                        setQuestions(newQuestions)
+                                    }}
+                                />
 
-                        }}>
+                                <input
+                                    type="text"
+                                    placeholder={`Answer ${choiceIndex+1}`}
+                                    value={choice}
+                                    onChange = {(e) => {
+                                        const newQuestions = [...questions]
+                                        newQuestions[index].choices[choiceIndex] = choice
+                                        setQuestions(newQuestions)
+                                    }}
+                                />
 
-                        </input>
+                            </div>    
+                        ))}
+                        
+
+                        {/* Make test button */}
+                        <button
+                        onClick={console.log("temp placeholder")}
+                        className="my-10 text-5xl bg-black text-white rounded-4xl px-3 py-2 hover:bg-slate-400">
+                            Create Test
+                        </button>
+                        
                     </div>
                 ))}
             </div>
