@@ -112,17 +112,16 @@ function Create(){
 
                             </div>    
                         ))}
-                        
-
-                        {/* Make test button */}
-                        <button
-                        onClick={console.log("temp placeholder")}
-                        className="my-10 text-5xl bg-black text-white rounded-4xl px-3 py-2 hover:bg-slate-400">
-                            Create Test
-                        </button>
-                        
                     </div>
                 ))}
+
+
+                {/* Make test button */}
+                <button
+                onClick={console.log("temp placeholder")}
+                className="my-10 text-5xl bg-black text-white rounded-4xl px-3 py-2 hover:bg-slate-400">
+                    Create Test
+                </button>
             </div>
 
         </div>
