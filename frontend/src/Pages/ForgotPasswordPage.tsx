@@ -1,10 +1,11 @@
 import {supabase} from '../supabase'
-import React from 'react'
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 export default function ForgotPasswordPage() {
   return <ForgotPassword />;
 }
+
 
 function ForgotPassword() {
   const [email, setEmail] = useState("");
@@ -15,6 +16,13 @@ function ForgotPassword() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const navigate = useNavigate();
+
+  function handleSupabaseError(error: { message: string } | null): boolean {
+    if (!error) return false;
+    setError(error.message);
+    return true;
+  }
 
   async function handleNext() {
     // 1st time user hits next, they are sent the 6-digit code
@@ -25,11 +33,7 @@ function ForgotPassword() {
       }
       // Calls to supabase to create a random code and send it to the user
       const { error } = await supabase.auth.resetPasswordForEmail(email);
-      if (error) {
-        // TEMP: will fix later
-        setError("supabase error");
-        return;
-      }
+      if (handleSupabaseError(error)) return;
       setCodeSent(true);
       return;
     }
@@ -40,16 +44,12 @@ function ForgotPassword() {
       return;
     }
     // Supabase verifies the code and authenticates the user
-    const { data, error } = await supabase.auth.verifyOtp({
+    const { error } = await supabase.auth.verifyOtp({
       email,
       token: code,
       type: 'recovery'
     });
-    if (error) {
-      //  TEMP: will fix later
-      setError("supabase error");
-      return;
-    }
+    if (handleSupabaseError(error)) return;
     setShowReset(true);
   }
 
@@ -67,13 +67,23 @@ function ForgotPassword() {
       password: newPassword
     });
 
-    if (error) {
-      // TEMP: will fix this later
-      setError("supabase error");
-      return;
-    }
-    setSuccess("Your password has been reset. You can now log in.");
+    if (handleSupabaseError(error)) return;
+
+    // User has succeeded at resetting their password
+    // Routing them back to LoginPage.tsx in 3 sec
     await supabase.auth.signOut();
+    let curr = 3;
+    let intervalID = setInterval(() => {
+      // Displays count to user
+      setSuccess(`Your password has been reset. Redirecting to login in ${curr}`);
+      curr = curr - 1;
+      if (curr < 0) {
+        // clears the interval and
+        // routes user back to login
+        clearInterval(intervalID);
+        navigate('/');
+      }
+    }, 1000);
   }
 
   if (showReset) {

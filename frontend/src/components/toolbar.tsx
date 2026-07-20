@@ -31,7 +31,7 @@ export default function Toolbar(){
             <div className="max-w-full flex [&>div]:p-5 bg-black text-white">
                 {links.map((i) => {
                 return(
-                    <a href={i[1]} className="p-5" key={i[0]}
+                    <a href={i[1]} className={i[0] === "Sign Out" ? "p-5 ml-auto" : "p-5"} key={i[0]}
                         onClick={(e) => LogOut(e, i[0], setLoggingOut, navigate)}
                     >{i[0]}</a>
                 )
