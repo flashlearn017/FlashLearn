@@ -28,6 +28,25 @@ function Create(){
         setQuestions(newQuestions);
     }
 
+    function createTest(){
+        if(questions.length == 0){
+            alert("Create questions first!")
+            return;
+        }
+
+        if(timedTest){
+            if(testTime <= 0){
+                alert("Amount of time must be positive and greater than 0")
+                return;
+            }
+        }
+
+        if(questions.some(question=> question.choices.some(choice=>choice.trim() == ""))){
+            alert("All answer choices must be filled out")
+            return;
+        }
+    }
+
     return(
         <div>
             <Toolbar/>
@@ -115,10 +134,8 @@ function Create(){
                     </div>
                 ))}
 
-
-                {/* Make test button */}
                 <button
-                onClick={console.log("temp placeholder")}
+                onClick={createTest}
                 className="my-10 text-5xl bg-black text-white rounded-4xl px-3 py-2 hover:bg-slate-400">
                     Create Test
                 </button>
