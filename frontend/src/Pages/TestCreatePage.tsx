@@ -1,19 +1,71 @@
 import Toolbar from "../components/toolbar"
+import SettingImg from "../assets/setting.webp"
 
 import {useState} from "react"
 
 export default function CreateTestPage(){
-    return <Create/>
-}
-
-function Create(){
+    const [testName, setTestName] = useState("");
     const [numQuestions, setNumQuestions] = useState("");
     const [timedTest, setTimedTest] = useState(false)
-    const [testTime, setTestTime] = useState("")
-    const [questions, setQuestions] = useState([])
+    const [testTime, setTestTime] = useState("");
+    const [questions, setQuestions] = useState([]);
+    const [showSetting, setShowSetting] = useState(true)
 
+    return (
+        <div>
+            <Toolbar/>
+            <div className="flex justify-center text-5xl my-4"> Create {testName || "your Test"} </div>
+            <div className="flex justify-center">
+                <button
+                onClick={()=> setShowSetting(!showSetting)}
+                className="text-3xl bg-black text-white rounded-4xl px-3 py-2 hover:bg-slate-400"
+                >
+                    {showSetting ? "Hide Settings" : "Show Settings"}
+                </button>
+            </div>
+            {showSetting && (
+            <Setting
+                testName={testName}
+                setTestName={setTestName}
+                numQuestions={numQuestions}
+                setNumQuestions={setNumQuestions}
+                timedTest={timedTest}
+                setTimedTest={setTimedTest}
+                testTime={testTime}
+                setTestTime={setTestTime}
+                setQuestions={setQuestions}
+            />
+            )}
+            {questions.length > 0 && (
+            <Create
+                timedTest={timedTest}
+                testTime={testTime}
+                questions={questions}
+                setQuestions={setQuestions}
+            />
+            )}
+        </div>
+    )
+}
+
+function Setting({
+    testName,
+    setTestName,
+    numQuestions,
+    setNumQuestions,
+    timedTest,
+    setTimedTest,
+    testTime,
+    setTestTime,
+    setQuestions,
+    }){
     function createQuestions(){
         const count = Number(numQuestions)
+
+        if(timedTest && testTime < 1){
+            alert("Must enter a time!!")
+            return;
+        }
 
         const newQuestions = [];
 
@@ -27,34 +79,21 @@ function Create(){
 
         setQuestions(newQuestions);
     }
-
-    function createTest(){
-        if(questions.length == 0){
-            alert("Create questions first!")
-            return;
-        }
-
-        if(timedTest){
-            if(testTime <= 0){
-                alert("Amount of time must be positive and greater than 0")
-                return;
-            }
-        }
-
-        if(questions.some(question=> question.choices.some(choice=>choice.trim() == ""))){
-            alert("All answer choices must be filled out")
-            return;
-        }
-    }
-
     return(
-        <div>
-            <Toolbar/>
-            <div className="flex justify-center text-5xl my-4"> Create your test </div>
+        <div className="max-w-4xl mx-auto mt-5 bg-gray-400 shadow-lg rounded-xl p-8">
             <div className="flex justify-center items-center flex-col text-xl gap-1">
+                <div className="text-2xl">
+                    Settings 
+                </div>
+                <input
+                    type="text"
+                    placeholder="Name of this Test"
+                    value={testName}
+                    onChange={(e) =>setTestName(e.target.value)}
+                />
                 <input
                     type="number"
-                    placeholder="Number of questions"
+                    placeholder="Number of Questions"
                     value={numQuestions}
                     onChange={(e)=>setNumQuestions(e.target.value)}
                 />
@@ -77,12 +116,45 @@ function Create(){
                     />
                 )}
 
-                {/* Eventually I'll only show the create questions if they filled everything above */}
                 <button
                 onClick={createQuestions}
-                className="my-10 text-5xl bg-black text-white rounded-4xl px-3 py-2 hover:bg-slate-400">
-                    Create Questions
+                className="my-10 text-3xl bg-black text-white rounded-4xl px-3 py-2 hover:bg-slate-400">
+                    Update Settings
                 </button>
+            </div>
+        </div>
+    )
+}
+
+function Create({
+    timedTest,
+    testTime,
+    questions,
+    setQuestions,
+    }){
+
+    function createTest(){
+        if(questions.length == 0){
+            alert("Create Questions First!")
+            return;
+        }
+
+        if(timedTest){
+            if(testTime <= 0){
+                alert("Amount of time must be positive and greater than 0")
+                return;
+            }
+        }
+
+        if(questions.some(question=> question.choices.some(choice=>choice.trim() == ""))){
+            alert("All answer choices must be filled out")
+            return;
+        }
+    }
+
+    return(
+        <div className="max-w-4xl mx-auto mt-10 bg-gray-400 shadow-lg rounded-xl p-8">
+            <div className="flex justify-center items-center flex-col text-xl gap-1">
             </div>
 
             <div className="text-2xl flex flex-col items-center">
@@ -134,13 +206,14 @@ function Create(){
                     </div>
                 ))}
 
+                {questions.length > 0 && (
                 <button
                 onClick={createTest}
-                className="my-10 text-5xl bg-black text-white rounded-4xl px-3 py-2 hover:bg-slate-400">
+                className="my-10 text-3xl bg-black text-white rounded-4xl px-3 py-2 hover:bg-slate-400">
                     Create Test
                 </button>
+                )}
             </div>
-
         </div>
     )
 }
