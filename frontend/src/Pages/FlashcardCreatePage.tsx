@@ -41,7 +41,7 @@ function Flashcard(){
     }
 
     // Creates the card deck in the backend
-    function createCardDeck() {}
+    function createCardDeck() {/*To be implemented later*/}
 
     return (
         <div>
@@ -63,7 +63,7 @@ function Flashcard(){
             </div>
             <div className="flex justify-center p-4">
                 <button
-                    className="my-10 text-5xl bg-black text-white rounded-4xl px-3 py-2 hover:bg-slate-400"
+                    className="my-10 text-5xl bg-black text-white rounded-4xl px-3 py-2 hover:bg-slate-400 cursor-pointer"
                     onClick={previewDeck}
                 >Create Flashcard(s)</button>
             </div>
@@ -96,7 +96,7 @@ function Flashcard(){
             }
                 <div className="flex justify-center p-4">
                     <button
-                        className="my-10 text-5xl bg-black text-white rounded-4xl px-3 py-2 hover:bg-slate-400"
+                        className="my-10 text-5xl bg-black text-white rounded-4xl px-3 py-2 hover:bg-slate-400 cursor-pointer"
                         onClick={createCardDeck}
                     >Create Deck
                     </button>
