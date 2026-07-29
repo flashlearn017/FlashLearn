@@ -48,12 +48,14 @@ function Flashcard(){
             <Toolbar/>
             <div className="flex justify-center text-5xl my-6"> Create your Flashcards! </div>
             <div className="flex justify-center text-xl my-2">
+                {/* Name of Card Deck */}
                 <input 
                     type="text"
                     placeholder="Name of Set"
                     value={cardDeckName}
                     onChange={(e) => setCardDeckName(e.target.value)}
                 />
+                {/* Number of cards in new deck */}
                 <input 
                     type="number"
                     placeholder="Number of Flashcards"
@@ -61,6 +63,7 @@ function Flashcard(){
                     onChange={(e) => setNumCards(e.target.value)}
                 />
             </div>
+            {/* Preview of cards in deck for user to fill */}
             <div className="flex justify-center p-4">
                 <button
                     className="my-10 text-5xl bg-black text-white rounded-4xl px-3 py-2 hover:bg-slate-400 cursor-pointer"
@@ -69,8 +72,10 @@ function Flashcard(){
             </div>
 
             {createDeck && (<div>{
+            // Displays cards in array one by one
               cardDeck.map((card, index) => (
                 <div key={index} className="flex justify-center gap-6 pb-4">
+                    {/* Body for the question side of card */}
                     <textarea
                         className="bg-[#8c8c8c] text-[#fffdfd] border-2 border-black w-[480px] h-60 p-3.5 text-[1.3rem]"
                         placeholder="Type question here"
@@ -81,6 +86,7 @@ function Flashcard(){
                             setCardDeck(newQuestions)
                         }}
                     />
+                    {/* Body for the answer side of card */}
                     <textarea
                         className="bg-[#8c8c8c] text-[#fffdfd] border-2 border-black w-[480px] h-60 p-3.5 text-[1.3rem]"
                         placeholder="Type answer here"
@@ -95,6 +101,7 @@ function Flashcard(){
               ))  
             }
                 <div className="flex justify-center p-4">
+                    {/* Button for finalizing deck to backend */}
                     <button
                         className="my-10 text-5xl bg-black text-white rounded-4xl px-3 py-2 hover:bg-slate-400 cursor-pointer"
                         onClick={createCardDeck}
