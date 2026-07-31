@@ -59,8 +59,18 @@ function Setting({
     setTestTime,
     setQuestions,
     }){
-    function createQuestions(){
+    function updateSettings(){
         const count = Number(numQuestions)
+
+        if(testName.trim() == ""){
+            alert("Must have a test name!!")
+            return;
+        }
+
+        if(Number(numQuestions) <= 0){
+            alert("Must have at least 1 question!")
+            return;
+        }
 
         if(timedTest && testTime < 1){
             alert("Must enter a time!!")
@@ -117,7 +127,7 @@ function Setting({
                 )}
 
                 <button
-                onClick={createQuestions}
+                onClick={updateSettings}
                 className="my-10 text-3xl bg-black text-white rounded-4xl px-3 py-2 hover:bg-slate-400">
                     Update Settings
                 </button>
@@ -134,7 +144,7 @@ function Create({
     }){
 
     function createTest(){
-        if(questions.length == 0){
+        if(questions.some(question => question.question.trim() == "")){
             alert("Create Questions First!")
             return;
         }
