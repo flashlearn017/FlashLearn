@@ -26,9 +26,17 @@
   - Refactor size of flipcard
   - Nav bar
   - New background color?
+
+  //https://stackoverflow.com/questions/66556514/tailwind-grid-template-columns -> setting individual grid-col + row length
  */}
 
+
+
 import {useState} from 'react'
+import Sidebar from '../components/assets/Sidebar/Sidebar.tsx';
+import Navbar from '../components/assets/Navbar/Navigationbar.tsx';
+import RightArrowIcon from '../components/assets/svg-icons/RightArrowIcon.tsx';
+import LeftArrowIcon from '../components/assets/svg-icons/LeftArrowIcon.tsx';
 export default function CardDisplayPage() {
     return <CardDisplay/>
 }
@@ -77,6 +85,10 @@ function FlipCardComponent({frontContent, backContent}: FlipCardObject){
     );
 }
 
+
+
+
+
 function CardDisplay() {
     const[count,setCount] = useState(1);
     const FlipCardsArr = md.map((FlipCard) => {
@@ -91,50 +103,84 @@ function CardDisplay() {
 
     const totalFlipCards = FlipCardsArr.length;
 
+
     return (
-        <div className=" flex flex-col fmin-h-screen justify-center items-center ">
-            { /*card*/}
-            {FlipCardsArr[count-1]}
+        <div className='grid grid-cols-[auto_1fr] grid-rows-[auto_1fr] min-h-screen gap-x-1 border-2'>
+            <Navbar />
            
-            {/* button container */}
-            <div className="flex flex-row justify-between w-1/6">
-                
-                {/*Left arrow container */}
-                <div onClick={()=>{setCount(count != 1 ? count=>count-1: count=>count)}}>
+            <Sidebar />
+          
+            <div className="flex flex-col justify-center items-center gap-2">
+                {FlipCardsArr[count-1]}
 
-                    {/*Left arrow symbol */}
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg" 
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        strokeWidth={1.5} 
-                        stroke="currentColor"
-                        className="size-8 bg-gray-400 rounded-lg text-white cursor-pointer">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
-                    </svg>
+                <div className="flex flex-row gap-2">
+
+                    <div onClick={()=>{setCount(count != 1 ? count=>count-1: count=>count)}}>
+                        <LeftArrowIcon />    
+                    </div>
+
+                    <div className="bg-gray-400 text-bold text-white text-xl rounded-lg px-4 py-0.75">{count + " / " + totalFlipCards}</div>
+                    
+                    <div 
+                        
+                        onClick={()=>{setCount(count < totalFlipCards ? count=> count+1 : count=>count)}}>
+                        <RightArrowIcon />
+                    </div>
+                    
                 </div>
 
-                <div className="bg-gray-400 text-bold text-white text-xl rounded-lg px-4 py-0.75"
-                >{count + " / " + totalFlipCards}</div>
 
-                 {/*Right arrow container*/}
-                <div onClick={()=>{setCount(count < totalFlipCards ? count=> count+1 : count=>count)}}>
-                    {/*Right arrow symbol */}
-                    <svg 
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        strokeWidth={1.5} 
-                        stroke="currentColor" 
-                        className="size-8 bg-gray-400 rounded-lg text-white cursor-pointer">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
-                    </svg>
-                </div>
-                
+
             </div>
             
-        </div>
 
+        </div>
     );
 }
 
+        // <div className="flex flex-row justify-between ">
+
+            
+        //     <div className=" flex flex-col fmin-h-screen justify-center items-center ">
+
+        //         { /*card*/}
+        //         {FlipCardsArr[count-1]}
+            
+        //         {/* button container */}
+        //         <div className="flex flex-row justify-between w-1/6">
+                    
+        //             {/*Left arrow container */}
+        //             <div onClick={()=>{setCount(count != 1 ? count=>count-1: count=>count)}}>
+
+        //                 {/*Left arrow symbol */}
+        //                 <svg
+        //                     xmlns="http://www.w3.org/2000/svg" 
+        //                     fill="none"
+        //                     viewBox="0 0 24 24"
+        //                     strokeWidth={1.5} 
+        //                     stroke="currentColor"
+        //                     className="size-8 bg-gray-400 rounded-lg text-white cursor-pointer">
+        //                     <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+        //                 </svg>
+        //             </div>
+
+        //             
+
+        //             {/*Right arrow container*/}
+        //             <div onClick={()=>{setCount(count < totalFlipCards ? count=> count+1 : count=>count)}}>
+        //                 {/*Right arrow symbol */}
+        //                 <svg 
+        //                     xmlns="http://www.w3.org/2000/svg"
+        //                     fill="none"
+        //                     viewBox="0 0 24 24"
+        //                     strokeWidth={1.5} 
+        //                     stroke="currentColor" 
+        //                     className="size-8 bg-gray-400 rounded-lg text-white cursor-pointer">
+        //                     <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+        //                 </svg>
+        //             </div>
+                    
+        //         </div>
+                
+        //     </div>
+        // </div>
