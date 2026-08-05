@@ -20,7 +20,7 @@ function Test(){
             const { data, error} = await supabase
                 .from("Test")
                 .select("*")
-                .eq("id", 5) // temp hard coded , will find a way to display all the tests the user has made then allow them to choose 
+                .eq("id", 6) // temp hard coded , will find a way to display all the tests the user has made then allow them to choose 
                 .single();
 
                 if(error){
