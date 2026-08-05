@@ -8,10 +8,39 @@ export default function TestPage(){
 
 function Test(){
     const [answers, setAnswers] = useState({})
-    const [currentTime, setTime] = useState(10) //max time in seconds
+    const [currentTime, setTime] = useState()
+    const [questions, setQuestions] = useState([])
+    const [timed, setTimed] = useState(false)
     const navigate = useNavigate();
 
     useEffect(() => {
+        const storedTest = localStorage.getItem("currentTest")
+
+        if (storedTest) {
+            const test = JSON.parse(storedTest);
+
+            const formattedQuestions = test.questions.map((q, index) => ({
+                id: index + 1,
+                question: q.question,
+                answerChoices: q.choices,
+                correctAnswer: q.choices[q.correctChoice]
+            }));
+
+            setQuestions(formattedQuestions);
+
+            if (test.timedTest) {
+                setTime(Number(test.testTime) * 60);
+                setTimed(true)
+            }
+        }
+    }, []);
+
+    
+    useEffect(() => {
+        if(!timed){
+            return;
+        }
+        
         let interval = setInterval(() => {
 
             setTime(prev => {
@@ -26,45 +55,6 @@ function Test(){
 
         return () => clearInterval(interval);
     }, []);
-    
-    const questions =
-    [
-        {
-            id: 1,
-            question: "Question 1",
-            status: false,
-            answerChoices: ["a", "b", "c", "d"],
-            correctAnswer: "a"
-        },
-        {
-            id: 2,
-            question: "Question 2",
-            status: false,
-            answerChoices: ["a", "b", "c", "d"],
-            correctAnswer: "b"
-        },
-        {
-            id: 3,
-            question: "Question 3",
-            status: false,
-            answerChoices: ["a", "b", "c", "d"],
-            correctAnswer: "c"
-        },
-        {
-            id: 4,
-            question: "Question 4",
-            status: false,
-            answerChoices: ["a", "b", "c", "d"],
-            correctAnswer: "d"
-        },
-        {
-            id: 5,
-            question: "Question 5",
-            status: false,
-            answerChoices: ["a", "b", "c", "d"],
-            correctAnswer: "d"
-        },
-    ]
 
     function calculateScore(){
         let score = 0;
@@ -88,10 +78,12 @@ function Test(){
             <Toolbar/>
 
             {/* Timer */}
-            <div className="flex justify-center text-3xl my-4">
-                {Math.floor(currentTime/60)}:
-                {(currentTime%60).toString().padStart(2, "0")}
-            </div>
+            {timed && (
+                <div className="flex justify-center text-3xl my-4">
+                    {Math.floor(currentTime/60)}:
+                    {(currentTime%60).toString().padStart(2, "0")}
+                </div>
+            )}
 
             {/* Completion Tracker */}
             <div className="flex justify-center gap-20 text-2xl border p-4">

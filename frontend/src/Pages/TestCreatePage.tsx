@@ -2,6 +2,7 @@ import Toolbar from "../components/toolbar"
 import SettingImg from "../assets/setting.webp"
 
 import {useState} from "react"
+import {useNavigate} from "react-router-dom";
 
 export default function CreateTestPage(){
     const [testName, setTestName] = useState("");
@@ -143,6 +144,8 @@ function Create({
     setQuestions,
     }){
 
+    const navigate = useNavigate();
+
     function createTest(){
         if(questions.some(question => question.question.trim() == "")){
             alert("Create Questions First!")
@@ -160,6 +163,15 @@ function Create({
             alert("All answer choices must be filled out")
             return;
         }
+
+        const test ={
+            timedTest,
+            testTime,
+            questions
+        }
+
+        localStorage.setItem("currentTest", JSON.stringify(test));        
+        navigate("/test")
     }
 
     return(
