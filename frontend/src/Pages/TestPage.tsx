@@ -2,18 +2,47 @@ import Toolbar from '../components/toolbar'
 import {useState, useEffect} from "react"
 import {useNavigate} from "react-router-dom";
 
+import {supabase} from "../supabase"
+
 export default function TestPage(){
     return <Test/>;
 }
 
 function Test(){
     const [answers, setAnswers] = useState({})
-    const [currentTime, setTime] = useState(10) //max time in seconds
+    const [currentTime, setTime] = useState()
+    const [questions, setQuestions] = useState([])
+    const [timed, setTimed] = useState(false)
     const navigate = useNavigate();
 
     useEffect(() => {
-        let interval = setInterval(() => {
+        async function fetchQuestions(){
+            const { data, error} = await supabase
+                .from("Test")
+                .select("*")
+                .eq("id", 5) // temp hard coded , will find a way to display all the tests the user has made then allow them to choose 
+                .single();
 
+                if(error){
+                    console.log(error)
+                    return
+                }
+
+            setQuestions(data.questions)
+            setTimed(data.timedTest)
+            setTime(data.testTime * 60)
+        }
+
+        fetchQuestions();
+    }, [])
+    
+    useEffect(() => {
+        console.log(timed)
+        if(!timed){
+            return;
+        }
+        
+        let interval = setInterval(() => {
             setTime(prev => {
                 if(prev <= 1){
                     clearInterval(interval);
@@ -25,56 +54,17 @@ function Test(){
         },1000);
 
         return () => clearInterval(interval);
-    }, []);
-    
-    const questions =
-    [
-        {
-            id: 1,
-            question: "Question 1",
-            status: false,
-            answerChoices: ["a", "b", "c", "d"],
-            correctAnswer: "a"
-        },
-        {
-            id: 2,
-            question: "Question 2",
-            status: false,
-            answerChoices: ["a", "b", "c", "d"],
-            correctAnswer: "b"
-        },
-        {
-            id: 3,
-            question: "Question 3",
-            status: false,
-            answerChoices: ["a", "b", "c", "d"],
-            correctAnswer: "c"
-        },
-        {
-            id: 4,
-            question: "Question 4",
-            status: false,
-            answerChoices: ["a", "b", "c", "d"],
-            correctAnswer: "d"
-        },
-        {
-            id: 5,
-            question: "Question 5",
-            status: false,
-            answerChoices: ["a", "b", "c", "d"],
-            correctAnswer: "d"
-        },
-    ]
+    }, [timed]);
 
     function calculateScore(){
         let score = 0;
         let wrong = [];
 
         for(let i = 0; i < questions.length; i++){
-            if(answers[questions[i].id] == questions[i].correctAnswer){
+            if(answers[i] == questions[i].correctChoice){
                 score++;
             }else{
-                wrong.push(questions[i].id)
+                wrong.push(i+1)
             }
         }
 
@@ -87,40 +77,42 @@ function Test(){
         <div>
             <Toolbar/>
 
-            {/* Timer */}
-            <div className="flex justify-center text-3xl my-4">
-                {Math.floor(currentTime/60)}:
-                {(currentTime%60).toString().padStart(2, "0")}
-            </div>
+            {/* printing timer */}
+            {timed && (
+                <div className="flex justify-center text-3xl my-4">
+                    {Math.floor(currentTime/60)}:
+                    {(currentTime%60).toString().padStart(2, "0")}
+                </div>
+            )}
 
             {/* Completion Tracker */}
             <div className="flex justify-center gap-20 text-2xl border p-4">
-                {questions.map((question) =>
-                    <div key={question.id}
-                    className={"w-10 h-10 text-center " + (answers[question.id] ? "bg-green-500 text-white" : "bg-white text-black")}>
-                        {question.id} 
+                {questions.map((question, index) =>
+                    <div key={index}
+                    className={"w-10 h-10 text-center " + (answers[index] ? "bg-green-500 text-white" : "bg-white text-black")}>
+                        {index+1} 
                     </div>
                 )}
             </div>
 
             {/* Printing the questions */}
             <div className= "my-2 flex items-center flex-col gap-10">
-                {questions.map((current_question, i) => (
-                    <div key={i}>
-                        {i+1}{". "}{current_question.question}
+                {questions.map((current_question, questionIndex) => (
+                    <div key={questionIndex}>
+                        {questionIndex+1}{". "}{current_question.question}
 
             {/* Printing the answer choices and allowing the user to choose an answer*/}
                         <div>
-                            {current_question.answerChoices.map((choice,j) => (
-                                <div key={j}>
+                            {current_question.choices.map((choice, choiceIndex) => (
+                                <div key={choiceIndex}>
                                     <input
                                         type="radio"
-                                        name={"question-" + current_question.id}
+                                        name={"question-" + questionIndex}
                                         value={choice}
-                                        onChange={(event) => {
+                                        onChange={() => {
                                             setAnswers((prev) => ({
                                                 ...prev,
-                                                [current_question.id]: event.target.value
+                                                [questionIndex]: choiceIndex
                                             }))
                                         }}
                                     />
