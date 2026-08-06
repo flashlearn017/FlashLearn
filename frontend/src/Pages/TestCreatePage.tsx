@@ -2,6 +2,9 @@ import Toolbar from "../components/toolbar"
 import SettingImg from "../assets/setting.webp"
 
 import {useState} from "react"
+import {useNavigate} from "react-router-dom";
+
+import {supabase} from "../supabase"
 
 export default function CreateTestPage(){
     const [testName, setTestName] = useState("");
@@ -38,6 +41,7 @@ export default function CreateTestPage(){
             )}
             {questions.length > 0 && (
             <Create
+                testName={testName}
                 timedTest={timedTest}
                 testTime={testTime}
                 questions={questions}
@@ -137,13 +141,21 @@ function Setting({
 }
 
 function Create({
+    testName,
     timedTest,
     testTime,
     questions,
     setQuestions,
     }){
 
-    function createTest(){
+    const navigate = useNavigate();
+
+    async function createTest(){
+        const{
+            data: {user},
+        } = await supabase.auth.getUser();
+
+
         if(questions.some(question => question.question.trim() == "")){
             alert("Create Questions First!")
             return;
@@ -160,6 +172,26 @@ function Create({
             alert("All answer choices must be filled out")
             return;
         }
+ 
+        const { error } = await supabase
+            .from("Test")
+            .insert([
+                {
+                    user_id: user.id,
+                    name: testName,
+                    timedTest: timedTest,
+                    testTime: testTime ? Number(testTime) : null,
+                    questions: questions
+                }
+            ])
+        .select();
+
+        if(error){
+            console.log(error)
+            return;
+        }
+
+        navigate("/test")
     }
 
     return(
