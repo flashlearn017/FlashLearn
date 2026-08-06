@@ -41,7 +41,23 @@ function Flashcard(){
     }
 
     // Creates the card deck in the backend
-    function createCardDeck() {/*To be implemented later*/}
+    function createCardDeck() {
+        // Handling non Supabase errors first
+
+        // If user didn't give deck name
+        if (!cardDeckName) {
+            setError("You must fill in a name for this set")
+            return
+        }
+        
+        // If user didn't fill out all parts of the cards
+        for (let i = 0; i < cardDeck.length; i++) {
+            if (!cardDeck[i].questionBody || !cardDeck[i].answerBody) {
+                setError("All cards must have front and back filled out")
+                return
+            }
+        }
+    }
 
     return (
         <div>
