@@ -1,5 +1,7 @@
 import Toolbar from "../components/toolbar"
 import { useState } from "react"
+import { supabase } from "../supabase";
+import { useNavigate } from "react-router";
 
 type Card = {
     questionBody: string;
@@ -16,6 +18,7 @@ function Flashcard(){
     const [createDeck, setCreateDeck] = useState(false);
     const [cardDeck, setCardDeck] = useState<Card[]>([]);
     const [error, setError] = useState('');
+    const navigate = useNavigate();
 
     // Creates a preview of the deck
     function previewDeck() {
@@ -41,7 +44,42 @@ function Flashcard(){
     }
 
     // Creates the card deck in the backend
-    function createCardDeck() {/*To be implemented later*/}
+    async function createCardDeck() {
+        // Handling non Supabase errors first
+
+        // If user didn't give deck name
+        if (!cardDeckName) {
+            setError("You must fill in a name for this set")
+            return
+        }
+        
+        // If user didn't fill out all parts of the cards
+        for (let i = 0; i < cardDeck.length; i++) {
+            if (!cardDeck[i].questionBody || !cardDeck[i].answerBody) {
+                setError("All cards must have front and back filled out")
+                return
+            }
+        }
+
+        // Tries to save in Supabase
+        const {error: supabaseError} = await supabase
+            .from("Flashcard_Sets")
+            .insert({
+                set_name: cardDeckName,
+                flashcards: cardDeck
+            })
+            .select()
+            .single()
+
+            // Handle any Supabase error
+            if (supabaseError) {
+                setError(supabaseError.message)
+                return
+            }
+
+            // Navigate away
+            navigate("/flashcard")
+    }
 
     return (
         <div>
