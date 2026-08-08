@@ -107,7 +107,6 @@ function CardDisplay() {
         )
     
 
-
     const totalFlipCards = FlipCardsArr?.length;
 
 
