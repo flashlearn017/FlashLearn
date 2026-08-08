@@ -4,8 +4,8 @@ import { supabase } from "../supabase";
 import { useNavigate } from "react-router";
 
 type Card = {
-    questionBody: string;
-    answerBody: string;
+    front: string;
+    back: string;
 };
 
 export default function CreateFlashcard(){
@@ -34,8 +34,8 @@ function Flashcard(){
 
         for (let i = 0; i < count; i++) {
             newDeck.push({
-                questionBody : "",
-                answerBody : "",
+                front : "",
+                back : "",
             })
         }
 
@@ -55,7 +55,7 @@ function Flashcard(){
         
         // If user didn't fill out all parts of the cards
         for (let i = 0; i < cardDeck.length; i++) {
-            if (!cardDeck[i].questionBody || !cardDeck[i].answerBody) {
+            if (!cardDeck[i].front || !cardDeck[i].back) {
                 setError("All cards must have front and back filled out")
                 return
             }
@@ -117,10 +117,10 @@ function Flashcard(){
                     <textarea
                         className="bg-[#8c8c8c] text-[#fffdfd] border-2 border-black w-[480px] h-60 p-3.5 text-[1.3rem]"
                         placeholder="Type question here"
-                        value={card.questionBody}
+                        value={card.front}
                         onChange={(e) => {
                             const newQuestions: Card[] = [...cardDeck]
-                            newQuestions[index].questionBody = e.target.value
+                            newQuestions[index].front = e.target.value
                             setCardDeck(newQuestions)
                         }}
                     />
@@ -128,10 +128,10 @@ function Flashcard(){
                     <textarea
                         className="bg-[#8c8c8c] text-[#fffdfd] border-2 border-black w-[480px] h-60 p-3.5 text-[1.3rem]"
                         placeholder="Type answer here"
-                        value={card.answerBody}
+                        value={card.back}
                         onChange={(e) => {
                             const newAnswers: Card[] = [...cardDeck]
-                            newAnswers[index].answerBody = e.target.value
+                            newAnswers[index].back = e.target.value
                             setCardDeck(newAnswers)
                         }}
                     />
