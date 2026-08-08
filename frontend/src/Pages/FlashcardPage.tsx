@@ -50,22 +50,14 @@ function FlipCardComponent({frontContent, backContent}: FlipCardObject){
     );
 }
 
-
 type  data= {
-    created_at: string;
-    id: number;
-    name: string | null;
-    questions: Json;
-    testTime: number | null;
-    timedTest: boolean | null;
-    user_id: string | null;
+    flashcards: Json;
 }[]
-
 
 function CardDisplay() {
 
     const[count,setCount] = useState(1);
-    const[test, setTest] = useState<data>();
+    const[flashData, setFlashData] = useState<data>();
     const[error, setError] = useState<PostgrestError>();
 
    
@@ -84,7 +76,7 @@ function CardDisplay() {
 
             const { data, error} = await supabase
                 .from("Flashcard_Sets")
-                .select("*")
+                .select("flashcards")
                 .eq("user_id", user.id)
             
 
@@ -93,24 +85,30 @@ function CardDisplay() {
                 return
             }
 
-            setTest(data)
+            if(!data){
+            }
+            setFlashData(data)
         }
         
         fetchTest()
     }, [])
 
 
-    const FlipCardsArr =
-        test.map((card) => (
-        <FlipCardComponent 
-            frontContent={card.front} 
-            backContent={card.back} 
-        />
-        ));
- 
+    const FlipCardsArr  = 
+        (
+    
+            flashData.map((card) => {
+                <FlipCardComponent
+                    frontContent={JSON.parse(JSON.stringify(card.flashcards)).front}
+                    backContent={JSON.parse(JSON.stringify(card.flashcards)).back}
+                />
+            
+            })
+        )
+    
 
 
-    const totalFlipCards = FlipCardsArr.length;
+    const totalFlipCards = FlipCardsArr?.length;
 
 
     return (
@@ -120,7 +118,7 @@ function CardDisplay() {
             <Sidebar />
           
             <div className="flex flex-col justify-center items-center gap-2">
-                {FlipCardsArr[count-1]}
+                {FlipCardsArr?[count-1]:<></>}
 
                 <div className="flex flex-row gap-2">
 
