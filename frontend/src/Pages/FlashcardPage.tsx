@@ -48,6 +48,7 @@ function FlipCardComponent({frontContent, backContent}: FlipCardObject){
     );
 }
 
+
 type Flashcard = {
     front:string
     back:string
