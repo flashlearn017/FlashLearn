@@ -8,7 +8,6 @@ import TestHomePage from '../Pages/TestHomePage'
 import TestResultsPage from '../Pages/TestResultsPage'
 import CreateTestPage from '../Pages/TestCreatePage'
 import ForgotPasswordPage from '../Pages/ForgotPasswordPage'
-import FlashcardHomePage from '../Pages/FlashcardHomePage'
 import FlashcardCreatePage from '../Pages/FlashcardCreatePage'
 import FlashcardPage from '../Pages/FlashcardPage'
 
@@ -49,10 +48,6 @@ const routes = createBrowserRouter([
       {
         path: "/results",
         element: <TestResultsPage/>
-      },
-      {
-        path: "/flashcard-home",
-        element: <FlashcardHomePage/>
       },
       {
         path: "/create-flashcard",

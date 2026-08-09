@@ -6,6 +6,9 @@ import LeftArrowIcon from '../components/assets/svg-icons/LeftArrowIcon.tsx';
 import { supabase } from '../supabase.ts';
 import { PostgrestError } from '@supabase/supabase-js';
 import type{ Tables, Database, Json } from '../../database.types.ts';
+import { useNavigate } from "react-router";
+import Toolbar from "../components/toolbar"
+
 
 
 export default function CardDisplayPage() {
@@ -65,6 +68,7 @@ function CardDisplay() {
     const[flashData, setFlashData] = useState<Data>([]);
     const[selectedFlash, setSelected] = useState(null)
     const[error, setError] = useState<PostgrestError>();
+    const navigate = useNavigate();
     
     useEffect(() => {
         //displaying all the tests the user has made 
@@ -100,7 +104,14 @@ function CardDisplay() {
     if(!selectedFlash){
         return(
             <div>
+                <Toolbar/>
                 <div className="flex justify-center items-center min-h-screen flex-col gap-4">
+                    <div className="text-5xl flex justify-center"> What would you like to do today? </div>
+                    <button className="text-5xl bg-black text-white rounded-4xl px-3 py-2 hover:bg-slate-400" 
+                        onClick={()=> navigate("/create-flashcard")}>
+                        Create Flashcard 
+                    </button>
+                    <div className="text-5xl flex justify-center"> or </div>
                     <h1 className="text-4xl text-bold"> Choose a Set to Take</h1>
                         {flashData.map((currentFlash) => (
                         <button
