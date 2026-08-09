@@ -48,20 +48,22 @@ function FlipCardComponent({frontContent, backContent}: FlipCardObject){
     );
 }
 
-
 type Flashcard = {
     front:string
     back:string
 }
 
 type Data = {
-    flashcards: Flashcard;
+    id: string
+    set_name: string
+    flashcards: Flashcard[];
 }[]
 
 function CardDisplay() {
 
     const[count,setCount] = useState(1);
     const[flashData, setFlashData] = useState<Data>([]);
+    const[selectedFlash, setSelected] = useState(null)
     const[error, setError] = useState<PostgrestError>();
     
     useEffect(() => {
@@ -78,7 +80,7 @@ function CardDisplay() {
 
             const { data, error} = await supabase
                 .from("Flashcard_Sets")
-                .select("flashcards")
+                .select("id, set_name, flashcards")
                 .eq("user_id", user.id)
             
 
@@ -95,36 +97,30 @@ function CardDisplay() {
         fetchTest()
     }, [])
 
+    if(!selectedFlash){
+        return(
+            <div>
+                <div className="flex justify-center items-center min-h-screen flex-col gap-4">
+                    <h1 className="text-4xl text-bold"> Choose a Set to Take</h1>
+                        {flashData.map((currentFlash) => (
+                        <button
+                            key={currentFlash.id}
+                            onClick={() => setSelected(currentFlash)}
+                            className="text-3xl bg-black text-white rounded-4xl px-3 py-2 hover:bg-slate-400">
+                            {currentFlash.set_name}
+                        </button>
+                    ))}
+                </div>
+            </div>
+        )
+    }
 
     const FlipCardsArr  = 
-        flashData.map((card) => {
+        selectedFlash.flashcards.map((card) => {
             return(
             <FlipCardComponent
-
-
-
-
-
-
-            
-
-
-                /* Problem might be here */
-                //kinda hard coded index 0. test that
-
-
-
-
-
-
-
-
-
-
-
-
-                frontContent={card.flashcards[0].front}
-                backContent={card.flashcards[0].back}
+                frontContent={card.front}
+                backContent={card.back}
             />
             )
         })
@@ -138,7 +134,7 @@ function CardDisplay() {
             <Sidebar />
           
             <div className="flex flex-col justify-center items-center gap-2">
-                {FlipCardsArr.length > 0 ? FlipCardsArr[count-1]:<div>This doesnt work</div>}
+                {FlipCardsArr.length > 0 ? FlipCardsArr[count-1]:<div>Make a flashcard</div>}
 
                 <div className="flex flex-row gap-2">
 
