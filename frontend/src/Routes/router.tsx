@@ -20,49 +20,49 @@ const routes = createBrowserRouter([
     element: <LoginPage/>,
   },
   {
-    element: <ProtectedRouter/>,
-    children: [
-      {
-        path: "/home",
-        element: <HomePage/>,
-      },
-    ],
-  },
-  {
     path: "/create-account",
     element: <CreateNewAccountPage/>,
-  },
-  {
-    path: "/test",
-    element: <TestPage/>
-  },
-  {
-    path: "/test-home",
-    element: <TestHomePage/>
-  },
-  {
-    path: "/create-test",
-    element: <CreateTestPage/>
-  },
-  {
-    path: "/results",
-    element: <TestResultsPage/>
   },
   {
     path: "/forgot-password",
     element: <ForgotPasswordPage/>,
   },
   {
-    path: "/flashcard-home",
-    element: <FlashcardHomePage/>
-  },
-  {
-    path: "/create-flashcard",
-    element: <FlashcardCreatePage/>
-  },
-  {
-    path: "flashcard",
-    element: <FlashcardPage/>
+    element: <ProtectedRouter/>,
+    children: [
+      {
+        path: "/home",
+        element: <HomePage/>,
+      },
+      {
+        path: "/test",
+        element: <TestPage/>
+      },
+      {
+        path: "/test-home",
+        element: <TestHomePage/>
+      },
+      {
+        path: "/create-test",
+        element: <CreateTestPage/>
+      },
+      {
+        path: "/results",
+        element: <TestResultsPage/>
+      },
+      {
+        path: "/flashcard-home",
+        element: <FlashcardHomePage/>
+      },
+      {
+        path: "/create-flashcard",
+        element: <FlashcardCreatePage/>
+      },
+      {
+        path: "flashcard",
+        element: <FlashcardPage/>
+      }
+    ],
   }
 ])
 
