@@ -39,12 +39,12 @@ export default function TestPage(){
                 <div className="flex justify-center items-center min-h-screen flex-col gap-4">
                     <h1 className="text-4xl text-bold"> Choose a Test to Take</h1>
                     
-                    {test.map((currentTest, index) => (
+                    {test.map((currentTest) => (
                         <button
                             key={currentTest.id}
                             onClick={() => setSelected(currentTest)}
                             className="text-3xl bg-black text-white rounded-4xl px-3 py-2 hover:bg-slate-400">
-                            Test{index+1}
+                            {currentTest.name}
                         </button>
                     ))}
                 </div>
@@ -64,7 +64,6 @@ function Test({test}){
     const navigate = useNavigate();
     
     useEffect(() => {
-        console.log(timed)
         if(!timed){
             return;
         }
