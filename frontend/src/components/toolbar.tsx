@@ -21,8 +21,8 @@ export default function Toolbar(){
     const navigate = useNavigate();
     const links = [
         ["Home", "/home"],
-        ["Flashcards", "/flashcard-home"],
-        ["Test", "/test-home"],
+        ["Flashcards", "/flashcard"],
+        ["Test", "/test"],
         ["Sign Out", "/"]
     ]
 
