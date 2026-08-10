@@ -4,7 +4,6 @@ import LoginPage from '../Pages/LoginPage'
 import HomePage from '../Pages/HomePage'
 import CreateNewAccountPage from '../Pages/CreateNewAccountPage'
 import TestPage from '../Pages/TestPage'
-import TestHomePage from '../Pages/TestHomePage'
 import TestResultsPage from '../Pages/TestResultsPage'
 import CreateTestPage from '../Pages/TestCreatePage'
 import ForgotPasswordPage from '../Pages/ForgotPasswordPage'
@@ -36,10 +35,6 @@ const routes = createBrowserRouter([
       {
         path: "/test",
         element: <TestPage/>
-      },
-      {
-        path: "/test-home",
-        element: <TestHomePage/>
       },
       {
         path: "/create-test",

@@ -37,6 +37,12 @@ export default function TestPage(){
             <div>
                 <Toolbar/>
                 <div className="flex justify-center items-center min-h-screen flex-col gap-4">
+                    <div className="text-4xl"> What would you like to do today? </div>
+                    <button className="text-3xl bg-black text-white rounded-4xl px-3 py-2 hover:bg-slate-400" 
+                        onClick={()=> navigate("/create-test")}>
+                        Create Test 
+                    </button>
+                    <div className="text-4xl"> or </div>
                     <h1 className="text-4xl text-bold"> Choose a Test to Take</h1>
                     
                     {test.map((currentTest) => (
