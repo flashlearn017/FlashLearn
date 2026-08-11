@@ -8,6 +8,8 @@ export default function TestPage(){
     const [test, setTest] = useState([])
     const [selectedTest, setSelected] = useState(null)
 
+    const navigate = useNavigate();
+
     useEffect(() => {
         //displaying all the tests the user has made 
         async function fetchTest(){
@@ -123,7 +125,7 @@ function Test({test}){
             <div className="flex justify-center gap-20 text-2xl border p-4">
                 {questions.map((question, index) =>
                     <div key={index}
-                    className={"w-10 h-10 text-center " + (answers[index] ? "bg-green-500 text-white" : "bg-white text-black")}>
+                    className={"w-10 h-10 text-center " + (answers[index]!= undefined ? "bg-green-500 text-white" : "bg-white text-black")}>
                         {index+1} 
                     </div>
                 )}
@@ -132,8 +134,9 @@ function Test({test}){
             {/* Printing the questions */}
             <div className= "my-2 flex items-center flex-col gap-10">
                 {questions.map((current_question, questionIndex) => (
-                    <div key={questionIndex}>
-                        {questionIndex+1}{". "}{current_question.question}
+                    <div key={questionIndex} 
+                    className="w-40 ml-15">
+                            {questionIndex+1}{". "}{current_question.question}
 
             {/* Printing the answer choices and allowing the user to choose an answer*/}
                         <div>
@@ -150,7 +153,7 @@ function Test({test}){
                                             }))
                                         }}
                                     />
-                                    {choice}
+                                    {" "}{choice}
                                 </div>
                             ))}
                         </div>    

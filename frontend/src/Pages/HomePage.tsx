@@ -17,14 +17,14 @@ function Home(){
 
           <button
             className="bg-black text-white rounded-lg px-3 py-2 hover:bg-slate-400"
-            onClick={() => navigate("/flashcard-home")}
+            onClick={() => navigate("/flashcard")}
           >
             Flashcards
           </button>
 
           <button
             className="bg-black text-white rounded-lg px-3 py-2 hover:bg-slate-400"
-            onClick={() => navigate("/test-home")}
+            onClick={() => navigate("/test")}
           >
             Tests
           </button>

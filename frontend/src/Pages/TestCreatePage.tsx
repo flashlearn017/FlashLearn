@@ -241,6 +241,7 @@ function Create({
                                         newQuestions[index].choices[choiceIndex] = e.target.value
                                         setQuestions(newQuestions)
                                     }}
+                                    className="ml-2"
                                 />
 
                             </div>    

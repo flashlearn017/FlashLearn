@@ -9,10 +9,10 @@ export default function Results(){
 function Result(){
     const [searchParams] = useSearchParams();
 
-    const score = searchParams.get("score");
+    const score = Math.round(Number(searchParams.get("score")));
     const wrong = searchParams.get("wrong");
 
-    const nav = useNavigate();
+    const navigate = useNavigate();
 
     return(
         <div>
@@ -37,12 +37,12 @@ function Result(){
                 )}
 
                 <button className="flex justify-center text-xl bg-black text-white rounded-lg px-3 py-2 hover:bg-slate-400"
-                onClick={()=>nav("/test-home")}>
+                onClick={()=>navigate("/test")}>
                     Take a new test
                 </button>
 
                 <button className="flex justify-center text-xl bg-black text-white rounded-lg px-3 py-2 hover:bg-slate-400"
-                onClick={()=>nav("/flashcards")}>
+                onClick={()=>navigate("/flashcards")}>
                     Review Flashcards
                 </button>
             </div>
