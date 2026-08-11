@@ -9,7 +9,7 @@ export default function Results(){
 function Result(){
     const [searchParams] = useSearchParams();
 
-    const score = searchParams.get("score");
+    const score = Math.round(Number(searchParams.get("score")));
     const wrong = searchParams.get("wrong");
 
     const navigate = useNavigate();
