@@ -9,8 +9,6 @@ import type{ Tables, Database, Json } from '../../database.types.ts';
 import { useNavigate } from "react-router";
 import Toolbar from "../components/toolbar"
 
-
-
 export default function CardDisplayPage() {
     return <CardDisplay/>
 }
@@ -19,14 +17,53 @@ export default function CardDisplayPage() {
 interface FlipCardObject {
     frontContent: string;
     backContent: string;
+    isHard: boolean | null; 
+    id: string;
 };
 
+// To be implemented
+// function shuffleCards {
+//     return;
+// }
+
+async function saveDifficulty(hard: boolean | null){
+    const { data, error } = await supabase
+        .from('Flashcards_set')
+        .update({ isHard: true })
+        .eq('id', card.id)
+        .select()
+}
+
+async function SelectDifficultyButton(){
+    const [hard, setHard] = useState<boolean | null>()
+    return(
+        <div className='inline-flex flex-row gap-4 items-center'>
+            <button className='bg-green-100'
+            onClick={()=> setHard(false)}> 
+            Easy
+             </button>    
+            <button className='bg-red-100'
+            onClick={()=> setHard(true)}> 
+            Hard
+            </button>
+
+            <div>{saveDifficulty(hard)}</div>
+        </div>
+    );
+}
 
 {/*Generate a flip card from given front and back data */}
-function FlipCardComponent({frontContent, backContent}: FlipCardObject){
+function FlipCardComponent({frontContent, backContent, isHard}: FlipCardObject){
      const[isFlipped, setIsFlipped] = useState(false);
+     const[checkedIsHard, setIsHard] = useState(null);
      return (
+       
+
+   
         <div className={` h-80 w-70 cursor-pointer  rounded-lg justify-center items-center flex flex-col
+                                ${
+                                    isHard === true? "border-2 border-orange-100": "border-2 border-green-100"
+                                }
                                 ${isFlipped? "bg-red-500": "bg-blue-500" }
                                 transition-transform duration-400 ${isFlipped? " transform-[rotateY(180deg)]":""}`}              
                     onClick={()=>{setIsFlipped(!isFlipped)}}> 
@@ -43,17 +80,23 @@ function FlipCardComponent({frontContent, backContent}: FlipCardObject){
                             
                             // Back side of card
                             <div className= "text-center text-bold text-white text-xl transform-[rotateY(180deg)] m-2 wrap-anywhere">
-                                {backContent}
+                                    {backContent}
+                                    
                             </div>
+                        
 
                         }
         </div>
+
+ 
     );
 }
 
 type Flashcard = {
     front:string
     back:string
+    isHard: boolean | null; 
+    id: string;
 }
 
 type Data = {
@@ -71,7 +114,6 @@ function CardDisplay() {
     const navigate = useNavigate();
     
     useEffect(() => {
-        //displaying all the tests the user has made 
         async function fetchTest(){
             const {
                 data: {user},
@@ -127,11 +169,13 @@ function CardDisplay() {
     }
 
     const FlipCardsArr  = 
-        selectedFlash.flashcards.map((card) => {
+    // .filter((card: Flashcard) => card.isHard)
+        selectedFlash.flashcards.map((card: Flashcard) => {
             return(
             <FlipCardComponent
                 frontContent={card.front}
                 backContent={card.back}
+                isHard={card.isHard}
             />
             )
         })
@@ -143,8 +187,12 @@ function CardDisplay() {
         <div className='grid grid-cols-[auto_1fr] grid-rows-[auto_1fr] min-h-screen gap-x-1 border-2'>
             <Navbar />
             <Sidebar />
+
+            <div className="flex flex-row items-center">
+            <SelectDifficultyButton />
           
             <div className="flex flex-col justify-center items-center gap-2">
+                
                 {FlipCardsArr.length > 0 ? FlipCardsArr[count-1]:<div>Make a flashcard</div>}
 
                 <div className="flex flex-row gap-2">
@@ -162,6 +210,7 @@ function CardDisplay() {
                     </div>
                     
                 </div>
+            </div>
             </div>
         </div>
     );

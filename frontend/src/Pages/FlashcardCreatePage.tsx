@@ -6,6 +6,8 @@ import { useNavigate } from "react-router";
 type Card = {
     front: string;
     back: string;
+    isHard: boolean | null;
+    id: string
 };
 
 export default function CreateFlashcard(){
@@ -36,6 +38,8 @@ function Flashcard(){
             newDeck.push({
                 front : "",
                 back : "",
+                isHard: null,
+                id: crypto.randomUUID()
             })
         }
 
