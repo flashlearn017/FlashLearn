@@ -1,4 +1,3 @@
-
 import {useEffect, useState} from 'react'
 import Sidebar from '../components/assets/Sidebar/Sidebar.tsx';
 import Navbar from '../components/assets/Navbar/Navigationbar.tsx';
@@ -19,7 +18,6 @@ interface FlipCardObject {
     backContent: string;
 };
 
-    
 
 {/*Generate a flip card from given front and back data */}
 function FlipCardComponent({frontContent, backContent}: FlipCardObject){
@@ -50,43 +48,61 @@ function FlipCardComponent({frontContent, backContent}: FlipCardObject){
     );
 }
 
-type  data= {
+
+
+type thisUserFlashData= {
+    id: number;
+    set_name: string | null;
     flashcards: Json;
-}[]
+}[];
+
+type selectedFlashData= {
+    id: number;
+    set_name: string | null;
+    flashcards: Json;
+};
+
+type Flipcard = {
+    front: string;
+    back: string;
+};
+
+
+
 
 function CardDisplay() {
 
     const[count,setCount] = useState(1);
-    const[flashData, setFlashData] = useState<data>();
-    const[error, setError] = useState<PostgrestError>();
+    const[selectedFlash, setSelected] = useState<selectedFlashData>();
 
-   
+    const[error, setError] = useState<PostgrestError>();
+    const[flashData, setFlashData] = useState<thisUserFlashData>();
+
     
     useEffect(() => {
         //displaying all the tests the user has made 
         async function fetchTest(){
+            
             const {
                 data: {user},
             }=await supabase.auth.getUser();
 
             if(!user){
-                console.log("ERROR RETRIEVING USER: ", user);
+                console.error("ERROR RETRIEVING USER: ", user);
                 return;
             }
 
             const { data, error} = await supabase
                 .from("Flashcard_Sets")
-                .select("flashcards")
-                .eq("user_id", user.id)
+                .select("id, set_name, flashcards")
+                .eq("user_id", user.id);
             
 
             if(error){
-                console.log(error)
-                return
+                console.error("ERROR IN FETCHING DATA: ",error);
+                return;
             }
 
-            if(!data){
-            }
             setFlashData(data)
         }
         
@@ -94,30 +110,55 @@ function CardDisplay() {
     }, [])
 
 
-    const FlipCardsArr  = 
-        (
-    
-            flashData.map((card) => {
-                <FlipCardComponent
-                    frontContent={JSON.parse(JSON.stringify(card.flashcards)).front}
-                    backContent={JSON.parse(JSON.stringify(card.flashcards)).back}
-                />
-            
-            })
+    // loading screen when fetching data
+    if(typeof flashData === 'undefined'){
+       return <div>loading</div>;
+    }
+
+
+    if(!selectedFlash){
+        return(
+            <div>
+                <div className="flex justify-center items-center min-h-screen flex-col gap-4">
+                    <h1 className="text-4xl text-bold"> Choose a Set to Take</h1>
+                        {flashData.map((currentFlash) => (
+                        <button
+                            key={currentFlash.id}
+                            onClick={() => setSelected(currentFlash)}
+                            className="text-3xl bg-black text-white rounded-4xl px-3 py-2 hover:bg-slate-400">
+                            {currentFlash.set_name}
+                        </button>
+                    ))}
+                </div>
+            </div>
         )
-    
+    }
 
-    const totalFlipCards = FlipCardsArr?.length;
+    // prevent typescript from assuming Flashdata is null or an object
+    const cardList = (selectedFlash.flashcards as Flipcard[]);
 
+    const FlipCardsArr =
+        cardList.map((card, index)=>{
+            return(
+                <FlipCardComponent
+                    key={index}
+                    frontContent={card.front}
+                    backContent={card.back}
+                />
+            );
+                
+            })
+        
+    const totalFlipCards = FlipCardsArr.length;
 
     return (
         <div className='grid grid-cols-[auto_1fr] grid-rows-[auto_1fr] min-h-screen gap-x-1 border-2'>
             <Navbar />
-           
             <Sidebar />
           
             <div className="flex flex-col justify-center items-center gap-2">
-                {FlipCardsArr?[count-1]:<></>}
+    
+                {FlipCardsArr.length > 0 ? FlipCardsArr[count-1]:<div>Make a flashcard</div>}
 
                 <div className="flex flex-row gap-2">
 
@@ -134,12 +175,7 @@ function CardDisplay() {
                     </div>
                     
                 </div>
-
-
-
             </div>
-            
-
         </div>
     );
 }
