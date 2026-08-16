@@ -25,7 +25,7 @@ export default function Toolbar(){
     const links = [
         ["Home", "/home"],
         ["Flashcards", "/flashcard"],
-        ["Test", "/test"],
+        ["Test", "/test-home"],
         ["Sign Out", "/"]
     ]
 

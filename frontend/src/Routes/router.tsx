@@ -4,7 +4,9 @@ import LoginPage from '../Pages/LoginPage'
 import HomePage from '../Pages/HomePage'
 import CreateNewAccountPage from '../Pages/CreateNewAccountPage'
 import TestPage from '../Pages/TestPage'
+import TestHomePage from '../Pages/TestHomePage'
 import TestResultsPage from '../Pages/TestResultsPage'
+import TestEditPage from '../Pages/TestEditPage'
 import CreateTestPage from '../Pages/TestCreatePage'
 import ForgotPasswordPage from '../Pages/ForgotPasswordPage'
 import FlashcardCreatePage from '../Pages/FlashcardCreatePage'
@@ -33,12 +35,20 @@ const routes = createBrowserRouter([
         element: <HomePage/>,
       },
       {
-        path: "/test",
+        path: "/test/:testId",
         element: <TestPage/>
       },
       {
         path: "/create-test",
         element: <CreateTestPage/>
+      },
+      {
+        path: "/test-home",
+        element:<TestHomePage/>
+      },
+      {
+        path: "/edit-test/:testId",
+        element:<TestEditPage/>
       },
       {
         path: "/results",
