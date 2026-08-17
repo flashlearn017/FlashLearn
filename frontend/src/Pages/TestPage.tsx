@@ -1,69 +1,54 @@
 import Toolbar from '../components/toolbar'
 import {useState, useEffect} from "react"
-import {useNavigate} from "react-router-dom";
+import {useParams, useNavigate} from "react-router-dom";
 
 import {supabase} from "../supabase"
 
 export default function TestPage(){
-    const [test, setTest] = useState([])
-    const [selectedTest, setSelected] = useState(null)
-
-    const navigate = useNavigate();
+    const {testId} = useParams();
+    const [test, setTest] = useState(null)
+    const [loading, setLoading] = useState(true)
 
     useEffect(() => {
-        //displaying all the tests the user has made 
-        async function fetchTest(){
-            const {
-                data: {user},
-            }=await supabase.auth.getUser();
+        async function fetchTest() {
+            if(!testId){
+                return;
+            }
 
-            const { data, error} = await supabase
+            const {data, error} = await supabase
                 .from("Test")
                 .select("*")
-                .eq("user_id", user.id)
+                .eq("id", testId)
+                .single()
+                
 
             if(error){
                 console.log(error)
-                return
-            }
-
+                setLoading(false)
+                return;
+            }    
+   
             setTest(data)
+            setLoading(false)
         }
-        
-        fetchTest()
-    }, [])
+        fetchTest();
+    }, [testId])
 
-    //the user chooses a test
-    if(!selectedTest){
-        return(
-            <div>
-                <Toolbar/>
-                <div className="flex justify-center items-center min-h-screen flex-col gap-4">
-                    <div className="text-4xl"> What would you like to do today? </div>
-                    <button className="text-3xl bg-black text-white rounded-4xl px-3 py-2 hover:bg-slate-400" 
-                        onClick={()=> navigate("/create-test")}>
-                        Create Test 
-                    </button>
-                    <div className="text-4xl"> or </div>
-                    <h1 className="text-4xl text-bold"> Choose a Test to Take</h1>
-                    
-                    {test.map((currentTest) => (
-                        <button
-                            key={currentTest.id}
-                            onClick={() => setSelected(currentTest)}
-                            className="text-3xl bg-black text-white rounded-4xl px-3 py-2 hover:bg-slate-400">
-                            {currentTest.name}
-                        </button>
-                    ))}
+    if (loading) {
+        return (
+            <div className="min-h-screen bg-slate-50 text-slate-950">
+                <Toolbar />
+                <div className="flex justify-center items-center min-h-screen text-2xl animate-pulse">
+                    Loading test...
                 </div>
             </div>
-        )
+        );
     }
-
-    return <Test test={selectedTest}/>;
+    
+    return <Test test={test} testId={testId}/>;
 }
 
-function Test({test}){
+function Test({test, testId}){
     const [answers, setAnswers] = useState({})
     const [currentTime, setTime] = useState()
     const questions = test.questions
@@ -92,7 +77,7 @@ function Test({test}){
         return () => clearInterval(interval);
     }, [timed]);
 
-    function calculateScore(){
+    async function calculateScore(){
         let score = 0;
         let wrong = [];
 
@@ -104,8 +89,23 @@ function Test({test}){
             }
         }
 
+        const finalScore = Math.round(score/questions.length*100)
+
+        const {data: {user}} = await supabase.auth.getUser();
+
+        const {error} = await supabase.from("Test_Results").insert({
+            user_id: user.id,
+            test_id: testId,
+            score: finalScore,
+        })
+
+        if(error){
+            console.log(error);
+            return;
+        }
+
         navigate(
-            "/results?score=" + score/questions.length*100 + "&wrong=" + wrong.join(",")
+            `/results?score=${finalScore}${wrong.length > 0 ? `&wrong=${+ wrong.join(",")}` : ""}`
         )
     }
 
@@ -115,28 +115,42 @@ function Test({test}){
 
             {/* printing timer */}
             {timed && (
-                <div className="flex justify-center text-3xl my-4">
-                    {Math.floor(currentTime/60)}:
-                    {(currentTime%60).toString().padStart(2, "0")}
+                <div className="sticky top-0 bg-white/90 backdrop-blur-md border-b border-slate-200 z-10 py-3 shadow-sm">
+                    <div className="flex justify-center items-center gap-2 text-2xl font-bold text-slate-800">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <span className="flex justify-center text-3xl my-4">
+                            {Math.floor(currentTime/60)}:
+                            {(currentTime%60).toString().padStart(2, "0")}
+                        </span>
+                    </div>
                 </div>
             )}
 
             {/* Completion Tracker */}
-            <div className="flex justify-center gap-20 text-2xl border p-4">
-                {questions.map((question, index) =>
-                    <div key={index}
-                    className={"w-10 h-10 text-center " + (answers[index]!= undefined ? "bg-green-500 text-white" : "bg-white text-black")}>
-                        {index+1} 
-                    </div>
-                )}
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 mb-8">
+                <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-4 text-center">Progress</h3>
+                <div className="flex flex-wrap gap-3 justify-center">
+                    {questions.map((question, index) =>
+                        <div key={index}
+                        className={"w-10 h-10 flex items-center justify-center " + (answers[index]!= undefined ? "bg-green-500 text-white" : "bg-white text-black")}>
+                            {index+1} 
+                        </div>
+                    )}
+                </div>    
             </div>
 
             {/* Printing the questions */}
             <div className= "my-2 flex items-center flex-col gap-10">
                 {questions.map((current_question, questionIndex) => (
-                    <div key={questionIndex} 
-                    className="w-40 ml-15">
-                            {questionIndex+1}{". "}{current_question.question}
+                    <div key={questionIndex} className="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-slate-200">
+                        <span className="flex items-center justify-center w-8 h-8 rounded-full bg-slate-100 text-slate-600 font-bold shrink-0">
+                            {questionIndex+1}
+                        </span>
+                        <h2 className="text-xl font-medium text-slate-900 pt-1 leading-snug">
+                            {current_question.question}
+                        </h2>
 
             {/* Printing the answer choices and allowing the user to choose an answer*/}
                         <div>
@@ -162,8 +176,8 @@ function Test({test}){
             </div>
             
             {/* Submit Button */}
-            <div className="flex justify-center my-30">
-                <button className="bg-black text-white rounded-lg px-3 py-2 hover:bg-slate-400"
+            <div className="flex justify-center mt-12">
+                <button className="w-full md:w-auto bg-slate-900 text-white text-lg font-bold rounded-xl px-12 py-4 hover:bg-slate-800 transition-all shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
                     onClick={calculateScore}
                 >
                     Submit

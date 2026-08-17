@@ -1,12 +1,12 @@
 import Toolbar from "../components/toolbar"
 import SettingImg from "../assets/setting.webp"
 
-import {useState} from "react"
-import {useNavigate} from "react-router-dom";
+import { useState } from "react"
+import { useNavigate } from "react-router-dom";
 
-import {supabase} from "../supabase"
+import { supabase } from "../supabase"
 
-export default function CreateTestPage(){
+export default function CreateTestPage() {
     const [testName, setTestName] = useState("");
     const [numQuestions, setNumQuestions] = useState("");
     const [timedTest, setTimedTest] = useState(false)
@@ -16,37 +16,38 @@ export default function CreateTestPage(){
 
     return (
         <div>
-            <Toolbar/>
-            <div className="flex justify-center text-5xl my-4"> Create {testName || "your Test"} </div>
+            <Toolbar />
+            <div className="text-3xl font-bold text-slate-900 mt-1 flex justify-center"> Create {testName || "your Test"} </div>
             <div className="flex justify-center">
                 <button
-                onClick={()=> setShowSetting(!showSetting)}
-                className="text-3xl bg-black text-white rounded-4xl px-3 py-2 hover:bg-slate-400"
+                    onClick={() => setShowSetting(!showSetting)}
+                    className="rounded-xl border border-slate-300 bg-white px-5 py-2.5 font-semibold text-slate-700 hover:bg-slate-100 transition-all shadow-sm my-5"
                 >
                     {showSetting ? "Hide Settings" : "Show Settings"}
                 </button>
             </div>
             {showSetting && (
-            <Setting
-                testName={testName}
-                setTestName={setTestName}
-                numQuestions={numQuestions}
-                setNumQuestions={setNumQuestions}
-                timedTest={timedTest}
-                setTimedTest={setTimedTest}
-                testTime={testTime}
-                setTestTime={setTestTime}
-                setQuestions={setQuestions}
-            />
+                <Setting
+                    testName={testName}
+                    setTestName={setTestName}
+                    numQuestions={numQuestions}
+                    setNumQuestions={setNumQuestions}
+                    timedTest={timedTest}
+                    setTimedTest={setTimedTest}
+                    testTime={testTime}
+                    setTestTime={setTestTime}
+                    setQuestions={setQuestions}
+                    setShowSetting={setShowSetting}
+                />
             )}
             {questions.length > 0 && (
-            <Create
-                testName={testName}
-                timedTest={timedTest}
-                testTime={testTime}
-                questions={questions}
-                setQuestions={setQuestions}
-            />
+                <Create
+                    testName={testName}
+                    timedTest={timedTest}
+                    testTime={testTime}
+                    questions={questions}
+                    setQuestions={setQuestions}
+                />
             )}
         </div>
     )
@@ -62,80 +63,92 @@ function Setting({
     testTime,
     setTestTime,
     setQuestions,
-    }){
-    function updateSettings(){
+    setShowSetting,
+}) {
+    function updateSettings() {
         const count = Number(numQuestions)
 
-        if(testName.trim() == ""){
+        if (testName.trim() == "") {
             alert("Must have a test name!!")
             return;
         }
 
-        if(Number(numQuestions) <= 0){
+        if (Number(numQuestions) <= 0) {
             alert("Must have at least 1 question!")
             return;
         }
 
-        if(timedTest && testTime < 1){
+        if (timedTest && testTime < 1) {
             alert("Must enter a time!!")
             return;
         }
 
         const newQuestions = [];
 
-        for(let i = 0; i < count; i++){
+        for (let i = 0; i < count; i++) {
             newQuestions.push({
-                question : "",
-                correctChoice : 0,
-                choices : ["", "", "", ""],
+                question: "",
+                correctChoice: 0,
+                choices: ["", "", "", ""],
             })
         }
 
         setQuestions(newQuestions);
+        setShowSetting(false);
     }
-    return(
-        <div className="max-w-4xl mx-auto mt-5 bg-gray-400 shadow-lg rounded-xl p-8">
-            <div className="flex justify-center items-center flex-col text-xl gap-1">
-                <div className="text-2xl">
-                    Settings 
-                </div>
+    return (
+        <div className="bg-white p-8 rounded-2xl shadow-sm border border-slate-200 mb-8 space-y-6">
+            <h2 className="text-xl font-bold text-slate-800 border-b border-slate-100 pb-4">
+                Settings
+            </h2>
+
+            <label className="block text-sm font-medium text-slate-700 mb-1">Test Name</label>        
+            <input
+                type="text"
+                className="w-full rounded-xl border border-slate-300 px-4 py-3 text-slate-900 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                placeholder="Name of this Test"
+                value={testName}
+                onChange={(e) => setTestName(e.target.value)}
+            />
+
+            <label className="block text-sm font-medium text-slate-700 mb-1">Number of Questions</label>
+            <input
+                type="number"
+                className="w-full rounded-xl border border-slate-300 px-4 py-3 text-slate-900 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                placeholder="Number of Questions"
+                value={numQuestions}
+                onChange={(e) => setNumQuestions(e.target.value)}
+            />
+
+            <div className="pt-2 pb-2">
+                <label className="flex items-center gap-3 cursor-pointer"> Do you want this test to be timed? 
                 <input
-                    type="text"
-                    placeholder="Name of this Test"
-                    value={testName}
-                    onChange={(e) =>setTestName(e.target.value)}
+                    type="checkbox"
+                    className="w-5 h-5 text-emerald-600 rounded border-slate-300 focus:ring-emerald-500 cursor-pointer"
+                    checked={timedTest}
+                    onChange={(e) => { setTimedTest(e.target.checked) }}
                 />
+                </label>
+            </div>
+
+            {timedTest && (
+                <div className="w-full rounded-xl border border-slate-300 px-4 py-3 text-slate-900 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20">
+                <label className="block text-sm font-medium text-slate-700 mb-1">Time Limit</label>
                 <input
                     type="number"
-                    placeholder="Number of Questions"
-                    value={numQuestions}
-                    onChange={(e)=>setNumQuestions(e.target.value)}
+                    className="w-full rounded-xl border border-slate-300 px-4 py-3 text-slate-900 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                    placeholder="Test Time in Minutes"
+                    value={testTime}
+                    onChange={(e) => { setTestTime(e.target.value) }}
                 />
-
-                <div>
-                    <label> Do you want this test to be timed? </label>
-                    <input
-                        type="checkbox"
-                        checked={timedTest}
-                        onChange={(e)=>{setTimedTest(e.target.checked)}}
-                    />
                 </div>
+            )}
 
-                {timedTest &&(
-                    <input
-                        type="number"
-                        placeholder="Test Time in Minutes"
-                        value={testTime}
-                        onChange={(e)=>{setTestTime(e.target.value)}}
-                    />
-                )}
-
-                <button
+            <button
                 onClick={updateSettings}
-                className="my-10 text-3xl bg-black text-white rounded-4xl px-3 py-2 hover:bg-slate-400">
-                    Update Settings
-                </button>
-            </div>
+                className="w-full bg-slate-900 text-white font-bold rounded-xl px-6 py-4 hover:bg-slate-800 transition-all shadow-md">
+                Update Settings
+            </button>
         </div>
     )
 }
@@ -146,33 +159,33 @@ function Create({
     testTime,
     questions,
     setQuestions,
-    }){
+}) {
 
     const navigate = useNavigate();
 
-    async function createTest(){
-        const{
-            data: {user},
+    async function createTest() {
+        const {
+            data: { user },
         } = await supabase.auth.getUser();
 
 
-        if(questions.some(question => question.question.trim() == "")){
+        if (questions.some(question => question.question.trim() == "")) {
             alert("Create Questions First!")
             return;
         }
 
-        if(timedTest){
-            if(testTime <= 0){
+        if (timedTest) {
+            if (testTime <= 0) {
                 alert("Amount of time must be positive and greater than 0")
                 return;
             }
         }
 
-        if(questions.some(question=> question.choices.some(choice=>choice.trim() == ""))){
+        if (questions.some(question => question.choices.some(choice => choice.trim() == ""))) {
             alert("All answer choices must be filled out")
             return;
         }
- 
+
         const { error } = await supabase
             .from("Test")
             .insert([
@@ -184,23 +197,23 @@ function Create({
                     questions: questions
                 }
             ])
-        .select();
+            .select();
 
-        if(error){
+        if (error) {
             console.log(error)
             return;
         }
 
-        navigate("/test")
+        navigate("/test-home")
     }
 
-    return(
+    return (
         <div className="max-w-4xl mx-auto mt-10 bg-gray-400 shadow-lg rounded-xl p-8">
             <div className="flex justify-center items-center flex-col text-xl gap-1">
             </div>
 
             <div className="text-2xl flex flex-col items-center">
-                {questions.map((q,index) => (
+                {questions.map((q, index) => (
                     <div key={index} className="mb-4">
                         <div>
                             Question {index + 1}
@@ -211,20 +224,20 @@ function Create({
                                 type="text"
                                 placeholder="Enter Question"
                                 value={q.question}
-                                onChange={(e)=>{
+                                onChange={(e) => {
                                     const newQuestion = [...questions]
                                     newQuestion[index].question = e.target.value
                                     setQuestions(newQuestion)
                                 }}>
                             </input>
                         </div>
-                        
+
                         {q.choices.map((choice, choiceIndex) => (
                             <div key={choiceIndex}>
                                 <input
                                     type="radio"
                                     name={`question-${index}`}
-                                    checked={q.correctChoice==choiceIndex}
+                                    checked={q.correctChoice == choiceIndex}
                                     onChange={() => {
                                         const newQuestions = [...questions]
                                         newQuestions[index].correctChoice = choiceIndex
@@ -234,9 +247,9 @@ function Create({
 
                                 <input
                                     type="text"
-                                    placeholder={`Answer ${choiceIndex+1}`}
+                                    placeholder={`Answer ${choiceIndex + 1}`}
                                     value={choice}
-                                    onChange = {(e) => {
+                                    onChange={(e) => {
                                         const newQuestions = [...questions]
                                         newQuestions[index].choices[choiceIndex] = e.target.value
                                         setQuestions(newQuestions)
@@ -244,17 +257,17 @@ function Create({
                                     className="ml-2"
                                 />
 
-                            </div>    
+                            </div>
                         ))}
                     </div>
                 ))}
 
                 {questions.length > 0 && (
-                <button
-                onClick={createTest}
-                className="my-10 text-3xl bg-black text-white rounded-4xl px-3 py-2 hover:bg-slate-400">
-                    Create Test
-                </button>
+                    <button
+                        onClick={createTest}
+                        className="my-10 text-3xl bg-black text-white rounded-4xl px-3 py-2 hover:bg-slate-400">
+                        Create Test
+                    </button>
                 )}
             </div>
         </div>
