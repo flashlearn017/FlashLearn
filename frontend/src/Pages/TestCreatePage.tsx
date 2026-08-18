@@ -102,7 +102,7 @@ function Setting({
                 Settings
             </h2>
 
-            <label className="block text-sm font-medium text-slate-700 mb-1">Test Name</label>        
+            <label className="block text-sm font-medium text-slate-700 mb-1">Test Name</label>
             <input
                 type="text"
                 className="w-full rounded-xl border border-slate-300 px-4 py-3 text-slate-900 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
@@ -121,26 +121,26 @@ function Setting({
             />
 
             <div className="pt-2 pb-2">
-                <label className="flex items-center gap-3 cursor-pointer"> Do you want this test to be timed? 
-                <input
-                    type="checkbox"
-                    className="w-5 h-5 text-emerald-600 rounded border-slate-300 focus:ring-emerald-500 cursor-pointer"
-                    checked={timedTest}
-                    onChange={(e) => { setTimedTest(e.target.checked) }}
-                />
+                <label className="flex items-center gap-3 cursor-pointer"> Do you want this test to be timed?
+                    <input
+                        type="checkbox"
+                        className="w-5 h-5 text-emerald-600 rounded border-slate-300 focus:ring-emerald-500 cursor-pointer"
+                        checked={timedTest}
+                        onChange={(e) => { setTimedTest(e.target.checked) }}
+                    />
                 </label>
             </div>
 
             {timedTest && (
                 <div className="w-full rounded-xl border border-slate-300 px-4 py-3 text-slate-900 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20">
-                <label className="block text-sm font-medium text-slate-700 mb-1">Time Limit</label>
-                <input
-                    type="number"
-                    className="w-full rounded-xl border border-slate-300 px-4 py-3 text-slate-900 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
-                    placeholder="Test Time in Minutes"
-                    value={testTime}
-                    onChange={(e) => { setTestTime(e.target.value) }}
-                />
+                    <label className="block text-sm font-medium text-slate-700 mb-1">Time Limit</label>
+                    <input
+                        type="number"
+                        className="w-full rounded-xl border border-slate-300 px-4 py-3 text-slate-900 focus:border-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                        placeholder="Test Time in Minutes"
+                        value={testTime}
+                        onChange={(e) => { setTestTime(e.target.value) }}
+                    />
                 </div>
             )}
 
@@ -208,16 +208,18 @@ function Create({
     }
 
     return (
-        <div className="max-w-4xl mx-auto mt-10 bg-gray-400 shadow-lg rounded-xl p-8">
-            <div className="flex justify-center items-center flex-col text-xl gap-1">
+        <div className="mt-8 max-w-4xl mx-auto">
+            <div className="flex items-center justify-between mb-4 px-2">
+                <h2 className="text-2xl font-bold text-slate-800"> Fill Out Questions</h2>
             </div>
 
-            <div className="text-2xl flex flex-col items-center">
-                {questions.map((q, index) => (
-                    <div key={index} className="mb-4">
-                        <div>
-                            Question {index + 1}
-                        </div>
+
+            {questions.map((q, index) => (
+                <div key={index} className="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-slate-200">
+                    <div className="flex gap-4 items-start mb-6">
+                        <span className="flex items-center justify-center w-8 h-8 rounded-full bg-emerald-100 text-emerald-700 font-bold shrink-0 mt-1">
+                            {index + 1}
+                        </span>
 
                         <div>
                             <input
@@ -231,45 +233,48 @@ function Create({
                                 }}>
                             </input>
                         </div>
-
-                        {q.choices.map((choice, choiceIndex) => (
-                            <div key={choiceIndex}>
-                                <input
-                                    type="radio"
-                                    name={`question-${index}`}
-                                    checked={q.correctChoice == choiceIndex}
-                                    onChange={() => {
-                                        const newQuestions = [...questions]
-                                        newQuestions[index].correctChoice = choiceIndex
-                                        setQuestions(newQuestions)
-                                    }}
-                                />
-
-                                <input
-                                    type="text"
-                                    placeholder={`Answer ${choiceIndex + 1}`}
-                                    value={choice}
-                                    onChange={(e) => {
-                                        const newQuestions = [...questions]
-                                        newQuestions[index].choices[choiceIndex] = e.target.value
-                                        setQuestions(newQuestions)
-                                    }}
-                                    className="ml-2"
-                                />
-
-                            </div>
-                        ))}
                     </div>
-                ))}
 
-                {questions.length > 0 && (
+                    {q.choices.map((choice, choiceIndex) => (
+                        <div key={choiceIndex}>
+                            <input
+                                type="radio"
+                                name={`question-${index}`}
+                                checked={q.correctChoice == choiceIndex}
+                                onChange={() => {
+                                    const newQuestions = [...questions]
+                                    newQuestions[index].correctChoice = choiceIndex
+                                    setQuestions(newQuestions)
+                                }}
+                            />
+
+                            <input
+                                type="text"
+                                placeholder={`Answer ${choiceIndex + 1}`}
+                                value={choice}
+                                onChange={(e) => {
+                                    const newQuestions = [...questions]
+                                    newQuestions[index].choices[choiceIndex] = e.target.value
+                                    setQuestions(newQuestions)
+                                }}
+                                className="ml-2"
+                            />
+
+                        </div>
+                    ))}
+                </div>
+            ))}
+
+            {questions.length > 0 && (
+                <div className="flex justify-center py-10">
                     <button
                         onClick={createTest}
-                        className="my-10 text-3xl bg-black text-white rounded-4xl px-3 py-2 hover:bg-slate-400">
+                        className="w-full md:w-auto bg-slate-900 text-white text-lg font-bold rounded-xl px-12 py-4 hover:bg-slate-800 transition-all shadow-md hover:shadow-lg">
                         Create Test
                     </button>
-                )}
-            </div>
+                </div>
+            )}
+
         </div>
     )
 }

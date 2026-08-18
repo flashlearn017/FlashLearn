@@ -39,6 +39,12 @@ function Home() {
     }, [])
 
     async function deleteTest(testId: string) {
+        const confirmDelete = window.confirm("Are you sure you want to delete this test? Action cannot be undone.")
+
+        if(!confirmDelete){
+            return;
+        }
+
         const {error} = await supabase
             .from("Test")
             .delete()
