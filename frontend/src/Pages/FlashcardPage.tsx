@@ -48,6 +48,10 @@ function FlipCardComponent({frontContent, backContent}: FlipCardObject){
     );
 }
 
+type Flashcard = {
+    front:string
+    back:string
+}
 
 
 type thisUserFlashData= {
@@ -157,7 +161,6 @@ function CardDisplay() {
             <Sidebar />
           
             <div className="flex flex-col justify-center items-center gap-2">
-    
                 {FlipCardsArr.length > 0 ? FlipCardsArr[count-1]:<div>Make a flashcard</div>}
 
                 <div className="flex flex-row gap-2">

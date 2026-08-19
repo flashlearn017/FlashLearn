@@ -1,145 +1,109 @@
-import Toolbar from '../components/toolbar'
-import {useState, useEffect} from "react"
-import {useNavigate} from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import Toolbar from "../components/toolbar";
+import { supabase } from "../supabase"
 
-export default function TestPage(){
-    return <Test/>;
+export default function TestHomePage() {
+    return <Home />
 }
 
-function Test(){
-    const [answers, setAnswers] = useState({})
-    const [currentTime, setTime] = useState(10) //max time in seconds
+function Home() {
     const navigate = useNavigate();
+    const [tests, setTests] = useState([]);
 
     useEffect(() => {
-        let interval = setInterval(() => {
+        //displaying all the tests the user has made 
+        async function fetchTest() {
+            const {
+                data: { user },
+            } = await supabase.auth.getUser();
 
-            setTime(prev => {
-                if(prev <= 1){
-                    clearInterval(interval);
-                    calculateScore();
-                    return 0;
-                }
-                return prev-1;
-            });
-        },1000);
-
-        return () => clearInterval(interval);
-    }, []);
-    
-    const questions =
-    [
-        {
-            id: 1,
-            question: "Question 1",
-            status: false,
-            answerChoices: ["a", "b", "c", "d"],
-            correctAnswer: "a"
-        },
-        {
-            id: 2,
-            question: "Question 2",
-            status: false,
-            answerChoices: ["a", "b", "c", "d"],
-            correctAnswer: "b"
-        },
-        {
-            id: 3,
-            question: "Question 3",
-            status: false,
-            answerChoices: ["a", "b", "c", "d"],
-            correctAnswer: "c"
-        },
-        {
-            id: 4,
-            question: "Question 4",
-            status: false,
-            answerChoices: ["a", "b", "c", "d"],
-            correctAnswer: "d"
-        },
-        {
-            id: 5,
-            question: "Question 5",
-            status: false,
-            answerChoices: ["a", "b", "c", "d"],
-            correctAnswer: "d"
-        },
-    ]
-
-    function calculateScore(){
-        let score = 0;
-        let wrong = [];
-
-        for(let i = 0; i < questions.length; i++){
-            if(answers[questions[i].id] == questions[i].correctAnswer){
-                score++;
-            }else{
-                wrong.push(questions[i].id)
+            if(!user){
+                return;
             }
+
+            const { data, error } = await supabase
+                .from("Test")
+                .select("*")
+                .eq("user_id", user.id)
+
+            if (error) {
+                console.log(error)
+                return
+            }
+
+            setTests(data)
         }
 
-        navigate(
-            "/results?score=" + score/questions.length*100 + "&wrong=" + wrong.join(",")
-        )
+        fetchTest()
+    }, [])
+
+    async function deleteTest(testId: string) {
+        const {error} = await supabase
+            .from("Test")
+            .delete()
+            .eq("id", testId)
+
+        if(error){
+            console.log(error);
+            return;
+        }
+
+        setTests(tests.filter((test) => test.id != testId))
     }
 
-    return(
-        <div>
-            <Toolbar/>
-
-            {/* Timer */}
-            <div className="flex justify-center text-3xl my-4">
-                {Math.floor(currentTime/60)}:
-                {(currentTime%60).toString().padStart(2, "0")}
-            </div>
-
-            {/* Completion Tracker */}
-            <div className="flex justify-center gap-20 text-2xl border p-4">
-                {questions.map((question) =>
-                    <div key={question.id}
-                    className={"w-10 h-10 text-center " + (answers[question.id] ? "bg-green-500 text-white" : "bg-white text-black")}>
-                        {question.id} 
+    return (
+        <div className="min-h-screen bg-slate-50 text-slate-950">
+            <Toolbar />
+            <main className="mx-auto max-w-6xl px-4 py-8">
+                <div className="flex flex-wrap items-end justify-between gap-4">
+                    <div>
+                        <p className="text-sm font-semibold uppercase tracking-wide text-emerald-700">Practice</p>
+                        <h1 className="mt-1 text-3xl font-bold">Tests</h1>
+                        <p className="mt-2 text-sm text-slate-600">Create tests from flashcards, edit them, or delete old versions.</p>
                     </div>
-                )}
-            </div>
+                    <button className="rounded-md bg-emerald-700 px-4 py-3 font-semibold text-white hover:bg-emerald-800" onClick={() => navigate("/create-test")}>
+                        Create test
+                    </button>
+                </div>
 
-            {/* Printing the questions */}
-            <div className= "my-2 flex items-center flex-col gap-10">
-                {questions.map((current_question, i) => (
-                    <div key={i}>
-                        {i+1}{". "}{current_question.question}
-
-            {/* Printing the answer choices and allowing the user to choose an answer*/}
-                        <div>
-                            {current_question.answerChoices.map((choice,j) => (
-                                <div key={j}>
-                                    <input
-                                        type="radio"
-                                        name={"question-" + current_question.id}
-                                        value={choice}
-                                        onChange={(event) => {
-                                            setAnswers((prev) => ({
-                                                ...prev,
-                                                [current_question.id]: event.target.value
-                                            }))
-                                        }}
-                                    />
-                                    {choice}
+                <section className="mt-6 grid gap-4 md:grid-cols-2">
+                    {tests.length === 0 ? (
+                        <div className="rounded-lg border border-dashed border-slate-300 bg-white p-8 text-center md:col-span-2">
+                            <h2 className="text-xl font-semibold">No tests yet</h2>
+                            <p className="mt-2 text-slate-600">Create a test from your flashcards to start practicing.</p>
+                            <button className="mt-4 rounded-md bg-emerald-700 px-4 py-3 font-semibold text-white hover:bg-emerald-800" onClick={() => navigate("/create-test")}>
+                                Create test
+                            </button>
+                        </div>
+                    ) : tests.map((test) => (
+                        <article key={test.id} className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+                            <div className="flex items-start justify-between gap-4">
+                                <div>
+                                    <h2 className="text-xl font-semibold">{test.name}</h2>
+                                    <p className="mt-2 text-sm text-slate-600">
+                                        {test.questions?.length} {test.questions?.length > 1? "questions" : "question"} {test.timedTest? `- ${test.testTime} ${test.testTime > 1? "minutes" : "minute"}` : ''}
+                                    </p>
                                 </div>
-                            ))}
-                        </div>    
-                    </div>
-                ))}
-            </div>
-            
-            {/* Submit Button */}
-            <div className="flex justify-center my-30">
-                <button className="bg-black text-white rounded-lg px-3 py-2 hover:bg-slate-400"
-                    onClick={calculateScore}
-                >
-                    Submit
-                </button>
-            </div>
+                                <span className="rounded-md bg-slate-100 px-3 py-1 text-sm font-medium text-slate-700">
+                                    Saved
+                                </span>
+                            </div>
+                            <div className="mt-5 flex flex-wrap gap-3">
+                                <Link to={`/test/${test.id}`} className="rounded-md bg-emerald-700 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-800">
+                                    Start
+                                </Link>
+                                <Link to={`/edit-test/${test.id}`} className="rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-900 hover:bg-slate-100">
+                                    Edit
+                                </Link>
+                                <button type="button" onClick={() => deleteTest(test.id)} className="rounded-md border border-rose-200 px-4 py-2 text-sm font-semibold text-rose-700 hover:bg-rose-50">
+                                    Delete
+                                </button>
+                            </div>
+                        </article>
+                    ))}
+                </section>
+            </main>
         </div>
     )
 }

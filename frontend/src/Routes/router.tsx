@@ -5,10 +5,10 @@ import HomePage from '../Pages/HomePage'
 import CreateNewAccountPage from '../Pages/CreateNewAccountPage'
 import TestPage from '../Pages/TestPage'
 import TestHomePage from '../Pages/TestHomePage'
+import TestResultsPage from '../Pages/TestResultsPage'
+import TestEditPage from '../Pages/TestEditPage'
 import CreateTestPage from '../Pages/TestCreatePage'
 import ForgotPasswordPage from '../Pages/ForgotPasswordPage'
-import ResultsPage from '../Pages/ResultsPage'
-import FlashcardHomePage from '../Pages/FlashcardHomePage'
 import FlashcardCreatePage from '../Pages/FlashcardCreatePage'
 import FlashcardPage from '../Pages/FlashcardPage'
 
@@ -20,49 +20,49 @@ const routes = createBrowserRouter([
     element: <LoginPage/>,
   },
   {
-    element: <ProtectedRouter/>,
-    children: [
-      {
-        path: "/home",
-        element: <HomePage/>,
-      },
-    ],
-  },
-  {
     path: "/create-account",
     element: <CreateNewAccountPage/>,
-  },
-  {
-    path: "/test",
-    element: <TestPage/>
-  },
-  {
-    path: "/test-home",
-    element: <TestHomePage/>
-  },
-  {
-    path: "/create-test",
-    element: <CreateTestPage/>
-  },
-  {
-    path: "/results",
-    element: <ResultsPage/>
   },
   {
     path: "/forgot-password",
     element: <ForgotPasswordPage/>,
   },
   {
-    path: "/flashcard-home",
-    element: <FlashcardHomePage/>
-  },
-  {
-    path: "/create-flashcard",
-    element: <FlashcardCreatePage/>
-  },
-  {
-    path: "flashcard",
-    element: <FlashcardPage/>
+    element: <ProtectedRouter/>,
+    children: [
+      {
+        path: "/home",
+        element: <HomePage/>,
+      },
+      {
+        path: "/test/:testId",
+        element: <TestPage/>
+      },
+      {
+        path: "/create-test",
+        element: <CreateTestPage/>
+      },
+      {
+        path: "/test-home",
+        element:<TestHomePage/>
+      },
+      {
+        path: "/edit-test/:testId",
+        element:<TestEditPage/>
+      },
+      {
+        path: "/results",
+        element: <TestResultsPage/>
+      },
+      {
+        path: "/create-flashcard",
+        element: <FlashcardCreatePage/>
+      },
+      {
+        path: "flashcard",
+        element: <FlashcardPage/>
+      }
+    ],
   }
 ])
 
