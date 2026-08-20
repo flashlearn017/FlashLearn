@@ -5,7 +5,7 @@ import RightArrowIcon from '../components/assets/svg-icons/RightArrowIcon.tsx';
 import LeftArrowIcon from '../components/assets/svg-icons/LeftArrowIcon.tsx';
 import { supabase } from '../supabase.ts';
 import { PostgrestError } from '@supabase/supabase-js';
-import type{ Tables, Database, Json } from '../../database.types.ts';
+//import type{ Tables, Database, Json } from '../../database.types.ts';
 import { useNavigate } from "react-router";
 import Toolbar from "../components/toolbar"
 
@@ -26,28 +26,35 @@ interface FlipCardObject {
 //     return;
 // }
 
-async function saveDifficulty(hard: boolean | null){
+async function saveDifficulty(hard:boolean, cardId: string, currentFlashcards:Flashcard[], setId:string){
+    const newFlashcards = currentFlashcards.map((card) => {
+        if(card.id == cardId){
+            return{...card, isHard: hard}
+        }
+        return card
+    });
+
     const { data, error } = await supabase
-        .from('Flashcards_set')
-        .update({ isHard: true })
-        .eq('id', card.id)
+        .from('Flashcard_Sets')
+        .update({flashcards: newFlashcards})
+        .eq('id', setId)
         .select()
+
+    if (error) {console.log(error.message)}
 }
 
-async function SelectDifficultyButton(){
-    const [hard, setHard] = useState<boolean | null>()
+function SelectDifficultyButton({cardId, currentFlashcards, setId}){
     return(
         <div className='inline-flex flex-row gap-4 items-center'>
             <button className='bg-green-100'
-            onClick={()=> setHard(false)}> 
+            onClick={()=> (saveDifficulty(false, cardId, currentFlashcards, setId))}> 
             Easy
              </button>    
             <button className='bg-red-100'
-            onClick={()=> setHard(true)}> 
+            onClick={()=> (saveDifficulty(true, cardId, currentFlashcards, setId))}>
             Hard
             </button>
 
-            <div>{saveDifficulty(hard)}</div>
         </div>
     );
 }
@@ -55,10 +62,7 @@ async function SelectDifficultyButton(){
 {/*Generate a flip card from given front and back data */}
 function FlipCardComponent({frontContent, backContent, isHard}: FlipCardObject){
      const[isFlipped, setIsFlipped] = useState(false);
-     const[checkedIsHard, setIsHard] = useState(null);
      return (
-       
-
    
         <div className={` h-80 w-70 cursor-pointer  rounded-lg justify-center items-center flex flex-col
                                 ${
@@ -114,7 +118,7 @@ function CardDisplay() {
     const navigate = useNavigate();
     
     useEffect(() => {
-        async function fetchTest(){
+        async function fetchFlash(){
             const {
                 data: {user},
             }=await supabase.auth.getUser();
@@ -140,7 +144,7 @@ function CardDisplay() {
             setFlashData(data as Data)
         }
         
-        fetchTest()
+        fetchFlash()
     }, [])
 
     if(!selectedFlash){
@@ -176,6 +180,7 @@ function CardDisplay() {
                 frontContent={card.front}
                 backContent={card.back}
                 isHard={card.isHard}
+                id={card.id}
             />
             )
         })
@@ -189,7 +194,7 @@ function CardDisplay() {
             <Sidebar />
 
             <div className="flex flex-row items-center">
-            <SelectDifficultyButton />
+            <SelectDifficultyButton cardId={selectedFlash.flashcards[count-1].id} currentFlashcards={selectedFlash.flashcards} setId={selectedFlash.id}/>
           
             <div className="flex flex-col justify-center items-center gap-2">
                 

@@ -55,7 +55,7 @@ function Profile() {
                 
                 <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-8 mb-8 flex items-center gap-6">
                     <div className="w-20 h-20 bg-emerald-100 text-emerald-700 rounded-full flex items-center justify-center text-3xl font-bold">
-                        {userEmail ? userEmail.charAt(0).toUpperCase() : "U"}
+                        {userEmail.charAt(0).toUpperCase()}
                     </div>
                     <div>
                         <h1 className="text-3xl font-bold text-slate-900">My Profile</h1>
