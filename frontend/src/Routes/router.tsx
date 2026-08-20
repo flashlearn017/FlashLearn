@@ -11,6 +11,7 @@ import CreateTestPage from '../Pages/TestCreatePage'
 import ForgotPasswordPage from '../Pages/ForgotPasswordPage'
 import FlashcardCreatePage from '../Pages/FlashcardCreatePage'
 import FlashcardPage from '../Pages/FlashcardPage'
+import ProfilePage from '../Pages/ProfilePage'
 
 import ProtectedRouter from '../Routes/protected_router'
 
@@ -61,6 +62,10 @@ const routes = createBrowserRouter([
       {
         path: "flashcard",
         element: <FlashcardPage/>
+      },
+      {
+        path: "profile",
+        element: <ProfilePage/>
       }
     ],
   }

@@ -37,7 +37,7 @@ function Result(){
                         </div>    
                     ) : (
                         <div className="mb-10 p-6 rounded-2xl text-rose-900 border border-emerald-200 flex items-center justify-center gap-3">
-                            Questions wrong: {wrong}
+                            You got these questions wrong: {wrong}
                         </div>
                     )}
 

@@ -26,6 +26,7 @@ export default function Toolbar(){
         ["Home", "/home"],
         ["Flashcards", "/flashcard"],
         ["Test", "/test-home"],
+        ["Profile", "/profile"],
         ["Sign Out", "/"]
     ]
 
