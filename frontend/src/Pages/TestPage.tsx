@@ -97,6 +97,7 @@ function Test({test, testId}){
             user_id: user.id,
             test_id: testId,
             score: finalScore,
+            test_name: test.name,
         })
 
         if(error){
