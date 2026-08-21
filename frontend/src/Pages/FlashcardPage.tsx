@@ -1,3 +1,75 @@
+/*
+    Workflow
+
+        First time user tries the set
+
+            - We check if all cards are null
+            - Random shuffle all cards
+        
+        - User goes through set -> Easy/Hard
+        
+        User finished set first time
+
+            - Sort deck into Easy/Hard maps/arrays
+            - Shuffle individual maps/arrays
+            - (maybe) merge them into one big array with Hard cards first
+            - save in Supabase
+
+*/
+
+
+
+/*
+Display:
+[h1,h2,h3], [m1,m2,m3], [e1,e2,e3]
+[h1, e3, m2, h3, m3]
+[h1,h2,h3, m1,m2,m3, e1,e2,e3]
+
+
+fetch after user finish categorizing
+E_array = FlipCardsArr.filter(get easy)
+... do same for other 2
+
+Array Method
+
+    E_arry.shuffle()
+    H_arry.shuffle()
+    M_arry.shuffle()
+
+    display(E_array)
+    display(H_array)
+    display(M_array)
+
+Map Method
+    map = {
+        "HARD": {array}
+        "EASY": 
+        "MEDIUM": 
+    }
+    
+    loop through selectedFlash:
+        nap[card.]
+
+hardcount = 3
+mediumcount = 3
+
+
+let i = 0
+while (coutn > hardcount)
+    arr[i] = arr[rand(i,hardcount-1)]
+
+
+arr[0] = arr[]
+arr[1] = arr[rand(0, size-1)]
+...
+arr[size-1] = arr[rand(0, size-1)]
+
+[h1, h2, h3, h4]
+
+*/
+
+
+
 import {useEffect, useState} from 'react'
 import Sidebar from '../components/assets/Sidebar/Sidebar.tsx';
 import Navbar from '../components/assets/Navbar/Navigationbar.tsx';
@@ -21,10 +93,11 @@ interface FlipCardObject {
     id: string;
 };
 
-// To be implemented
-// function shuffleCards {
-//     return;
-// }
+function shuffleCards() {
+
+
+    return;
+}
 
 async function saveDifficulty(hard:boolean, cardId: string, currentFlashcards:Flashcard[], setId:string){
     const newFlashcards = currentFlashcards.map((card) => {
@@ -115,6 +188,9 @@ function CardDisplay() {
     const[flashData, setFlashData] = useState<Data>([]);
     const[selectedFlash, setSelected] = useState(null)
     const[error, setError] = useState<PostgrestError>();
+    const[questions, setQuestions] = useState<'null' | 'easy' | 'hard'>
+    const[finishedDeck, setFinished] = useState(false);
+
     const navigate = useNavigate();
     
     useEffect(() => {
@@ -138,14 +214,13 @@ function CardDisplay() {
                 console.log(error)
                 return
             }
-
             if(!data){
             }
             setFlashData(data as Data)
         }
         
         fetchFlash()
-    }, [])
+    }, [finishedDeck])
 
     if(!selectedFlash){
         return(
@@ -172,6 +247,7 @@ function CardDisplay() {
         )
     }
 
+    
     const FlipCardsArr  = 
     // .filter((card: Flashcard) => card.isHard)
         selectedFlash.flashcards.map((card: Flashcard) => {
@@ -184,8 +260,9 @@ function CardDisplay() {
             />
             )
         })
+    
         
-
+        
     const totalFlipCards = FlipCardsArr?.length;
 
     return (
