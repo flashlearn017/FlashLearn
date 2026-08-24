@@ -1,75 +1,3 @@
-/*
-    Workflow
-
-        First time user tries the set
-
-            - We check if all cards are null
-            - Random shuffle all cards
-        
-        - User goes through set -> Easy/Hard
-        
-        User finished set first time
-
-            - Sort deck into Easy/Hard maps/arrays
-            - Shuffle individual maps/arrays
-            - (maybe) merge them into one big array with Hard cards first
-            - save in Supabase
-
-*/
-
-
-
-/*
-Display:
-[h1,h2,h3], [m1,m2,m3], [e1,e2,e3]
-[h1, e3, m2, h3, m3]
-[h1,h2,h3, m1,m2,m3, e1,e2,e3]
-
-
-fetch after user finish categorizing
-E_array = FlipCardsArr.filter(get easy)
-... do same for other 2
-
-Array Method
-
-    E_arry.shuffle()
-    H_arry.shuffle()
-    M_arry.shuffle()
-
-    display(E_array)
-    display(H_array)
-    display(M_array)
-
-Map Method
-    map = {
-        "HARD": {array}
-        "EASY": 
-        "MEDIUM": 
-    }
-    
-    loop through selectedFlash:
-        nap[card.]
-
-hardcount = 3
-mediumcount = 3
-
-
-let i = 0
-while (coutn > hardcount)
-    arr[i] = arr[rand(i,hardcount-1)]
-
-
-arr[0] = arr[]
-arr[1] = arr[rand(0, size-1)]
-...
-arr[size-1] = arr[rand(0, size-1)]
-
-[h1, h2, h3, h4]
-
-*/
-
-
-
 import {useEffect, useState} from 'react'
 import Sidebar from '../components/assets/Sidebar/Sidebar.tsx';
 import Navbar from '../components/assets/Navbar/Navigationbar.tsx';
@@ -93,10 +21,19 @@ interface FlipCardObject {
     id: string;
 };
 
-function shuffleCards() {
+function shuffleCards(array: Flashcard[]) {
+    const shuffled =[...array];
+    let currentIndex = shuffled.length;
+    
+    while(currentIndex > 0){
+        let randomIndex = Math.floor(Math.random() * currentIndex);
+        currentIndex--;
+    
 
+    [shuffled[currentIndex], shuffled[randomIndex]] = [shuffled[randomIndex], shuffled[currentIndex]];
+    }
 
-    return;
+    return shuffled;
 }
 
 async function saveDifficulty(hard:boolean, cardId: string, currentFlashcards:Flashcard[], setId:string){
@@ -158,10 +95,7 @@ function FlipCardComponent({frontContent, backContent, isHard}: FlipCardObject){
                             // Back side of card
                             <div className= "text-center text-bold text-white text-xl transform-[rotateY(180deg)] m-2 wrap-anywhere">
                                     {backContent}
-                                    
                             </div>
-                        
-
                         }
         </div>
 
@@ -188,7 +122,6 @@ function CardDisplay() {
     const[flashData, setFlashData] = useState<Data>([]);
     const[selectedFlash, setSelected] = useState(null)
     const[error, setError] = useState<PostgrestError>();
-    const[questions, setQuestions] = useState<'null' | 'easy' | 'hard'>
     const[finishedDeck, setFinished] = useState(false);
 
     const navigate = useNavigate();
@@ -237,7 +170,12 @@ function CardDisplay() {
                         {flashData.map((currentFlash) => (
                         <button
                             key={currentFlash.id}
-                            onClick={() => setSelected(currentFlash)}
+                            onClick={() =>
+                            setSelected({
+                                ...currentFlash,
+                                flashcards: shuffleCards(currentFlash.flashcards)
+                            })
+                        }
                             className="text-3xl bg-black text-white rounded-4xl px-3 py-2 hover:bg-slate-400">
                             {currentFlash.set_name}
                         </button>
@@ -260,8 +198,6 @@ function CardDisplay() {
             />
             )
         })
-    
-        
         
     const totalFlipCards = FlipCardsArr?.length;
 
