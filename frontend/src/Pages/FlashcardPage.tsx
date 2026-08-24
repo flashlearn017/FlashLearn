@@ -117,7 +117,6 @@ type Data = {
 }[]
 
 function CardDisplay() {
-
     const[count,setCount] = useState(1);
     const[flashData, setFlashData] = useState<Data>([]);
     const[selectedFlash, setSelected] = useState(null)
@@ -184,7 +183,6 @@ function CardDisplay() {
             </div>
         )
     }
-
     
     const FlipCardsArr  = 
     // .filter((card: Flashcard) => card.isHard)
