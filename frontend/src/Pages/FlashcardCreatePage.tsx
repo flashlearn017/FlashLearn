@@ -6,6 +6,8 @@ import { useNavigate } from "react-router";
 type Card = {
     front: string;
     back: string;
+    isHard: boolean | null;
+    id: string
 };
 
 export default function CreateFlashcard(){
@@ -36,6 +38,8 @@ function Flashcard(){
             newDeck.push({
                 front : "",
                 back : "",
+                isHard: null,
+                id: crypto.randomUUID()
             })
         }
 
@@ -82,75 +86,87 @@ function Flashcard(){
     }
 
     return (
-        <div>
+        <div className="min-h-screen bg-slate-50 text-slate-950">
             <Toolbar/>
-            <div className="flex justify-center text-5xl my-6"> Create your Flashcards! </div>
-            <div className="flex justify-center text-xl my-2">
-                {/* Name of Card Deck */}
-                <input 
-                    type="text"
-                    placeholder="Name of Set"
-                    value={cardDeckName}
-                    onChange={(e) => setCardDeckName(e.target.value)}
-                />
-                {/* Number of cards in new deck */}
-                <input 
-                    type="number"
-                    placeholder="Number of Flashcards"
-                    value={numCards}
-                    onChange={(e) => setNumCards(e.target.value)}
-                />
-            </div>
-            {/* Preview of cards in deck for user to fill */}
-            <div className="flex justify-center p-4">
-                <button
-                    className="my-10 text-5xl bg-black text-white rounded-4xl px-3 py-2 hover:bg-slate-400 cursor-pointer"
-                    onClick={previewDeck}
-                >Create Flashcard(s)</button>
-            </div>
 
-            {createDeck && (<div>{
-            // Displays cards in array one by one
-              cardDeck.map((card, index) => (
-                <div key={index} className="flex justify-center gap-6 pb-4">
-                    {/* Body for the question side of card */}
-                    <textarea
-                        className="bg-[#8c8c8c] text-[#fffdfd] border-2 border-black w-[480px] h-60 p-3.5 text-[1.3rem]"
-                        placeholder="Type question here"
-                        value={card.front}
-                        onChange={(e) => {
-                            const newQuestions: Card[] = [...cardDeck]
-                            newQuestions[index].front = e.target.value
-                            setCardDeck(newQuestions)
-                        }}
-                    />
-                    {/* Body for the answer side of card */}
-                    <textarea
-                        className="bg-[#8c8c8c] text-[#fffdfd] border-2 border-black w-[480px] h-60 p-3.5 text-[1.3rem]"
-                        placeholder="Type answer here"
-                        value={card.back}
-                        onChange={(e) => {
-                            const newAnswers: Card[] = [...cardDeck]
-                            newAnswers[index].back = e.target.value
-                            setCardDeck(newAnswers)
-                        }}
-                    />
-                </div>
-              ))  
-            }
-                <div className="flex justify-center p-4">
-                    {/* Button for finalizing deck to backend */}
+            <main className="mx-auto max-w-5xl px-4 py-10">
+                <div className="mx-auto w-full max-w-md rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
+                    <p className="text-sm font-semibold uppercase tracking-wide text-emerald-700">FlashLearn</p>
+                    <h1 className="mt-2 text-3xl font-bold">Create your flashcards</h1>
+                    <p className="mt-2 text-slate-600">Name your set and choose how many cards to fill in.</p>
+
+                    <label className="mt-6 block">
+                        <span className="text-sm font-medium text-slate-700">Name of Set</span>
+                        {/* Name of Card Deck */}
+                        <input
+                            type="text"
+                            placeholder="Name of Set"
+                            value={cardDeckName}
+                            onChange={(e) => setCardDeckName(e.target.value)}
+                            className="mt-2 w-full rounded-md border border-slate-300 px-3 py-2"
+                        />
+                    </label>
+
+                    <label className="mt-4 block">
+                        <span className="text-sm font-medium text-slate-700">Number of Flashcards</span>
+                        {/* Number of cards in new deck */}
+                        <input
+                            type="number"
+                            placeholder="Number of Flashcards"
+                            value={numCards}
+                            onChange={(e) => setNumCards(e.target.value)}
+                            className="mt-2 w-full rounded-md border border-slate-300 px-3 py-2"
+                        />
+                    </label>
+
+                    {error && <p className="mt-4 rounded-md border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-800">{error}</p>}
+
+                    {/* Preview of cards in deck for user to fill */}
                     <button
-                        className="my-10 text-5xl bg-black text-white rounded-4xl px-3 py-2 hover:bg-slate-400 cursor-pointer"
-                        onClick={createCardDeck}
-                    >Create Deck
-                    </button>
+                        className="mt-5 w-full rounded-md bg-emerald-700 px-4 py-3 font-semibold text-white hover:bg-emerald-800 disabled:cursor-not-allowed disabled:opacity-60"
+                        onClick={previewDeck}
+                    >Create Flashcard(s)</button>
                 </div>
-            </div>)}
 
-            {/* error message */}
-            {error && <p className="text-red-500 text-center">{error}</p>}
-
+                {createDeck && (<div className="mt-10">{
+                // Displays cards in array one by one
+                  cardDeck.map((card, index) => (
+                    <div key={index} className="mb-6 flex flex-col justify-center gap-4 sm:flex-row">
+                        {/* Body for the question side of card */}
+                        <textarea
+                            className="h-60 w-full rounded-lg border border-slate-300 bg-white p-3.5 text-[1.1rem] text-slate-950 shadow-sm transition-shadow duration-150 placeholder:text-slate-400 hover:shadow-lg focus:shadow-lg focus:outline-none sm:w-[480px]"
+                            placeholder="Type question here"
+                            value={card.front}
+                            onChange={(e) => {
+                                const newQuestions: Card[] = [...cardDeck]
+                                newQuestions[index].front = e.target.value
+                                setCardDeck(newQuestions)
+                            }}
+                        />
+                        {/* Body for the answer side of card */}
+                        <textarea
+                            className="h-60 w-full rounded-lg border border-slate-300 bg-white p-3.5 text-[1.1rem] text-slate-950 shadow-sm transition-shadow duration-150 placeholder:text-slate-400 hover:shadow-lg focus:shadow-lg focus:outline-none sm:w-[480px]"
+                            placeholder="Type answer here"
+                            value={card.back}
+                            onChange={(e) => {
+                                const newAnswers: Card[] = [...cardDeck]
+                                newAnswers[index].back = e.target.value
+                                setCardDeck(newAnswers)
+                            }}
+                        />
+                    </div>
+                  ))
+                }
+                    <div className="mx-auto flex max-w-md justify-center pb-10">
+                        {/* Button for finalizing deck to backend */}
+                        <button
+                            className="w-full rounded-md bg-emerald-700 px-4 py-3 font-semibold text-white hover:bg-emerald-800 disabled:cursor-not-allowed disabled:opacity-60"
+                            onClick={createCardDeck}
+                        >Create Deck
+                        </button>
+                    </div>
+                </div>)}
+            </main>
         </div>
     )
 }
