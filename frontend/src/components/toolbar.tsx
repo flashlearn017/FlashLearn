@@ -24,7 +24,7 @@ export default function Toolbar(){
     const location = useLocation();
     const links = [
         ["Home", "/home"],
-        ["Flashcards", "/flashcard"],
+        ["Flashcards", "/preview-flash"],
         ["Test", "/test-home"],
         ["Profile", "/profile"],
         ["Sign Out", "/"]

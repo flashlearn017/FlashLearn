@@ -52,7 +52,7 @@ function Result(){
                         </button>
 
                         <button className="border border-slate-300 bg-white font-bold text-slate-700 rounded-xl px-8 py-4 hover:bg-slate-50 transition-all flex-1 sm:flex-none"
-                        onClick={()=>navigate("/flashcard")}>
+                        onClick={()=>navigate("/preview-flash")}>
                             Review Flashcards
                         </button>
                     </div>

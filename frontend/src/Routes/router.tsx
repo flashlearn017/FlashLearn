@@ -13,6 +13,7 @@ import FlashcardCreatePage from '../Pages/FlashcardCreatePage'
 import FlashcardPage from '../Pages/FlashcardPage'
 import FlashcardResultsPage from '../Pages/FlashcardResultsPage'
 import ProfilePage from '../Pages/ProfilePage'
+import FlashcardHomePage from '../Pages/FlashcardHomepage';
 
 import ProtectedRouter from '../Routes/protected_router'
 
@@ -63,6 +64,10 @@ const routes = createBrowserRouter([
       {
         path: "flashcard",
         element: <FlashcardPage/>
+      },
+      {
+        path: "preview-flash",
+        element: <FlashcardHomePage/>
       },
       {
         path: "flashcard-results",

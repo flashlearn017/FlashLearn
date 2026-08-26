@@ -5,9 +5,8 @@ import RightArrowIcon from '../components/assets/svg-icons/RightArrowIcon.tsx';
 import LeftArrowIcon from '../components/assets/svg-icons/LeftArrowIcon.tsx';
 import { supabase } from '../supabase.ts';
 import { PostgrestError } from '@supabase/supabase-js';
-//import type{ Tables, Database, Json } from '../../database.types.ts';
 import { useNavigate } from "react-router";
-import Toolbar from "../components/toolbar"
+import { useLocation } from 'react-router';
 
 export default function CardDisplayPage() {
     return <CardDisplay/>
@@ -203,77 +202,27 @@ interface flashCardData {
 }
 
 function CardDisplay() {
+
     const[count,setCount] = useState(1);
-    const[flashData, setFlashData] = useState<Data>([]);
-    const[selectedFlash, setSelected] = useState<flashCardData | null>(null)
+
     const[error, setError] = useState<PostgrestError>();
     const[finishedDeck, setFinished] = useState(false);
     const[onFlip, setOnFlip] = useState(false);
 
     const navigate = useNavigate();
+    // get the flash data the user clicked from flashcard home page
+    const {state} = useLocation();
+    const [selectedFlash,setSelected] = useState(state);
     
-    useEffect(() => {
-        async function fetchFlash(){
-            const {
-                data: {user},
-            }=await supabase.auth.getUser();
-
-            if(!user){
-                console.log("ERROR RETRIEVING USER: ", user);
-                return;
-            }
-
-            const { data, error} = await supabase
-                .from("Flashcard_Sets")
-                .select("id, set_name, flashcards")
-                .eq("user_id", user.id)
-            
-
-            if(error){
-                console.log(error)
-                return
-            }
-            
-            setFlashData(data as Data)
-        }
-        
-        fetchFlash()
-    }, [])
+    shuffleCards(selectedFlash.flashcards);
+   
 
     // Reset the flip state whenever the displayed card changes
     useEffect(() => {
         setOnFlip(false);
     }, [count])
 
-    if(!selectedFlash){
-        return(
-            <div>
-                <Toolbar/>
-                <div className="flex justify-center items-center min-h-screen flex-col gap-4">
-                    <div className="text-5xl flex justify-center"> What would you like to do today? </div>
-                    <button className="text-5xl bg-black text-white rounded-4xl px-3 py-2 hover:bg-slate-400" 
-                        onClick={()=> navigate("/create-flashcard")}>
-                        Create Flashcard 
-                    </button>
-                    <div className="text-5xl flex justify-center"> or </div>
-                    <h1 className="text-4xl text-bold"> Choose a Set to Take</h1>
-                        {flashData.map((currentFlash) => (
-                        <button
-                            key={currentFlash.id}
-                            onClick={() =>
-                            setSelected({
-                                ...currentFlash,
-                                flashcards: shuffleCards(currentFlash.flashcards)
-                            })
-                        }
-                            className="text-3xl bg-black text-white rounded-4xl px-3 py-2 hover:bg-slate-400">
-                            {currentFlash.set_name}
-                        </button>
-                    ))}
-                </div>
-            </div>
-        )
-    }
+    
     
     const FlipCardsArr  =
         selectedFlash.flashcards.map((card: Flashcard) => {
@@ -289,7 +238,7 @@ function CardDisplay() {
             )
         })
         
-    const totalFlipCards = FlipCardsArr?.length;
+    const totalFlipCards = FlipCardsArr.length;
 
     if (finishedDeck) {
         return (
@@ -301,7 +250,7 @@ function CardDisplay() {
 
                     {/* button to end flashcard session */}
                     <button className="text-2xl bg-black text-white rounded-4xl px-6 py-3 hover:bg-slate-400 cursor-pointer transition-colors"
-                        onClick={()=>{completedDeck(selectedFlash.flashcards, navigate, selectedFlash.set_name)}}
+                        onClick={()=>{completedDeck(selectedFlash.flashcards,navigate,selectedFlash.set_name)}}
                     >End Review Session</button>
 
                     <div className="flex flex-row gap-2">
