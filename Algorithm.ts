@@ -13,6 +13,11 @@ Basic Workflow
     - This set has reached a good Easy/Hard ratio
     - Prompt the User to take a test
 
+Conditions for Easy/Hard Buttons to show
+
+    - user just flipped the card 
+    - first time user has seen this card since starting the set
+
 Parts
 
     - Flashcard has attributes : "Front, Back, Diffifculty"
