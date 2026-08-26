@@ -1,10 +1,9 @@
 # FlashLearn
 
-This platform allows users to create decks of flashcards or to take tests. The core functionality is the "spaced repetition" system: the app calculates when a user should see a card again based on how well they remember it (e.g., "Easy," "Hard"). 
+This platform allows users to create decks of flashcards or to take tests. During study sessions, flashcards are presented in order of difficulty, priotizing hard questions first, then medium, and saving the easiest for last. Users can also track their progress on their profile page to monitor their improvement over time.
 
 # Features 
 - Create decks of cards
-- Spaced Repetition Card Sort
 - Shuffle Cards
 - Create, edit, or delete test(s)
 - Profile Page to view old test grades

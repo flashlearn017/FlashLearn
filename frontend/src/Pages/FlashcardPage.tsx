@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react'
+import React ,{useEffect, useState} from 'react'
 import Sidebar from '../components/assets/Sidebar/Sidebar.tsx';
 import Navbar from '../components/assets/Navbar/Navigationbar.tsx';
 import RightArrowIcon from '../components/assets/svg-icons/RightArrowIcon.tsx';
@@ -92,20 +92,32 @@ function SelectDifficultyButton({cardId, currentFlashcards, setId, setSelected}:
 }
 
 {/* user finished reviewing the flashcard set */}
-function completedDeck(flashcards: Flashcard[]) {
+async function completedDeck(flashcards: Flashcard[], navigate: ReturnType<typeof useNavigate>, testName:string) {
 
     // Sort each card into 3 arrays based on difficulty
     const hardArray: Flashcard[] = [];
     const medArray: Flashcard[] = []; // null acts as medium
     const easyArray: Flashcard[] = [];
 
+    let easyCount = 0;
+    let medCount = 0;
+    let hardCount = 0;
+
     for (let i = 0; i < flashcards.length; i++) {
         if (flashcards[i].isHard === true) {
             hardArray.push(flashcards[i]);
+            hardCount++;
         } else if (flashcards[i].isHard === false) {
             easyArray.push(flashcards[i]);
-        } else {medArray.push(flashcards[i]);}
+            easyCount++;
+        } else {
+            medArray.push(flashcards[i]);
+            medCount++;
+        }
     }
+
+    let total = easyCount + medCount + hardCount;
+    let score = Math.round((easyCount/total)*100)
 
     // Merge back into one array
     const sortedDiffArray = [...hardArray, ...medArray, ...easyArray];
@@ -113,7 +125,31 @@ function completedDeck(flashcards: Flashcard[]) {
     // Shuffle cards in each diff
     shuffleCards(sortedDiffArray);
 
+    // Pushing the information to supabase
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if(!user){return;}
+
+    const { error } = await supabase
+            .from("Flashcard_Results")
+            .insert([
+                {
+                    user_id: user.id,
+                    test_name: testName,
+                    easy: easyCount,
+                    mid: medCount,
+                    hard: hardCount,
+                    score: score,
+                }
+            ]);
+
+        if (error) {
+            console.error(error.message);
+            return;
+        }
+
     // Navigate back to flashcard-home or results page
+    navigate(`/flashcard-results?hard=${hardCount}&med=${medCount}&easy=${easyCount}`);
 }
 
 {/*Generate a flip card from given front and back data */}
@@ -144,8 +180,6 @@ function FlipCardComponent({frontContent, backContent, isHard, isFlipped, setIsF
                             </div>
                         }
         </div>
-
- 
     );
 }
 
@@ -169,7 +203,6 @@ interface flashCardData {
 }
 
 function CardDisplay() {
-
     const[count,setCount] = useState(1);
     const[flashData, setFlashData] = useState<Data>([]);
     const[selectedFlash, setSelected] = useState<flashCardData | null>(null)
@@ -200,8 +233,7 @@ function CardDisplay() {
                 console.log(error)
                 return
             }
-            if(!data){
-            }
+            
             setFlashData(data as Data)
         }
         
@@ -242,7 +274,6 @@ function CardDisplay() {
             </div>
         )
     }
-
     
     const FlipCardsArr  =
         selectedFlash.flashcards.map((card: Flashcard) => {
@@ -270,7 +301,7 @@ function CardDisplay() {
 
                     {/* button to end flashcard session */}
                     <button className="text-2xl bg-black text-white rounded-4xl px-6 py-3 hover:bg-slate-400 cursor-pointer transition-colors"
-                        onClick={()=>{completedDeck(selectedFlash.flashcards)}}
+                        onClick={()=>{completedDeck(selectedFlash.flashcards, navigate, selectedFlash.set_name)}}
                     >End Review Session</button>
 
                     <div className="flex flex-row gap-2">

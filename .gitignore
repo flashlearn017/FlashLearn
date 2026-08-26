@@ -8,4 +8,5 @@ build/
 # env files
 .env*
 
+.idea/
 .DS_Store
