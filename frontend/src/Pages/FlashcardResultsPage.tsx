@@ -10,10 +10,11 @@ function Result(){
     //will have to chance the variables 
     const [searchParams] = useSearchParams();
 
-    const hard = 1
-    const easy = 2
-    const total = hard + easy;
-    const score = Math.round((total-easy)/total);
+    const hard = parseInt(searchParams.get('hard') || '0', 10);
+    const med = parseInt(searchParams.get('med') || '0', 10);
+    const easy = parseInt(searchParams.get('easy') || '0', 10);
+    const total = hard + med + easy;
+    const score = Math.round((easy/total)*100) || 0;
 
     const navigate = useNavigate();
 
@@ -36,11 +37,11 @@ function Result(){
                     
                     {hard == 0 ? (
                         <div className="mb-10 p-6 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-800 flex items-center justify-center gap-3">
-                            You found every flashcard easy!!
+                            There were no hard questions!!
                         </div>    
                     ) : (
                         <div className="mb-10 p-6 rounded-2xl text-rose-900 border border-emerald-200 flex items-center justify-center gap-3">
-                            You found these flashcards difficult {hard}
+                            You found these flashcards difficult: {hard}
                         </div>
                     )}
 

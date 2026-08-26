@@ -10,6 +10,7 @@ export default function ProfilePage() {
 function Profile() {
     const navigate = useNavigate();
     const [results, setResults] = useState([]);
+    const [flashcardResults, setFlashResults] = useState([])
     const [loading, setLoading] = useState(true);
     const [userEmail, setUserEmail] = useState("");
 
@@ -29,8 +30,20 @@ function Profile() {
                 console.log(error);
                 return;
             }
+
+            const { data:flashData, error:flashError } = await supabase
+                .from("Flashcard_Results")
+                .select("*")
+                .eq("user_id", user.id)
+                .order("created_at", { ascending: false });
+
+            if(flashError){
+                console.log(flashError);
+                return;
+            }    
             
             setResults(data || []);
+            setFlashResults(flashData || []);
             setLoading(false);
         }
 
@@ -103,6 +116,45 @@ function Profile() {
                             </ul>
                         </div>
                     )}
+                </div>
+
+                <div>
+                    <h2 className="text-xl font-bold text-slate-800 mb-4 px-1">Flashcard History</h2>
+                        {flashcardResults.length === 0 ? (
+                            <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-10 text-center">
+                                <h3 className="text-lg font-semibold text-slate-700">No flashcards reviewed yet</h3>
+                                <button 
+                                    className="mt-6 rounded-xl bg-slate-900 px-6 py-3 font-semibold text-white hover:bg-slate-800 transition-all" 
+                                    onClick={() => navigate("/flashcard")}
+                                >
+                                    Review Flashcards
+                                </button>
+                            </div>
+                        ) : (
+                            <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                                <ul className="divide-y divide-slate-100">
+                                    {flashcardResults.map((result: any) => (
+                                        <li key={result.id} className="p-6 flex items-center justify-between hover:bg-slate-50 transition-colors">
+                                            <div>
+                                                <p className="text-sm font-semibold text-slate-500 mb-1">
+                                                {new Date(result.created_at).toLocaleDateString(undefined, { 
+                                                    year: 'numeric', 
+                                                    month: 'short', 
+                                                    day: 'numeric',
+                                                    hour: '2-digit',
+                                                    minute: '2-digit'
+                                                })}
+                                            </p>
+                                                <p className="font-bold text-slate-800 text-lg">Flashcard Set: {result.test_name}</p>
+                                            </div>
+                                            <div className={`px-4 py-2 rounded-xl font-bold text-lg ${result.score >= 70 ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'}`}>
+                                                {result.score}%
+                                            </div>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        )}     
                 </div>
             </main>
         </div>
