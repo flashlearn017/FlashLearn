@@ -6,7 +6,7 @@ This platform allows users to create decks of flashcards or to take tests. Durin
 - Create decks of cards
 - Shuffle Cards
 - Create, edit, or delete test(s)
-- Profile Page to view old test grades
+- Profile Page to view old test and flashcard grades
 - Create account to save information
 
 # Installation
