@@ -34,9 +34,9 @@ export default function Toolbar(){
         <header className="sticky top-0 z-20 border-b border-slate-200 bg-gray-300/95 shadow-sm backdrop-blur">
             <nav className="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
                 <Link to="/home" className="flex items-center hover:opacity-80 transition-opacity">
-                    <img
+                    <img 
                         src={logo}
-                        className="h-10 w-auto"
+                        className="h-10 w-auto hidden sm:flex "
                         alt="Flashlearn Logo"
                     />
                 </Link>
