@@ -4,7 +4,7 @@ import type { PostgrestError } from "@supabase/supabase-js";
 import type{ Json } from '../../database.types.ts';
 import { useNavigate } from "react-router";
 import Toolbar from "../components/toolbar.tsx";
-
+import { PulseLoader } from "react-spinners";
 type Flashcard = {
     front:string
     back:string
@@ -106,9 +106,11 @@ function FlashcardHomePage() {
     // loading screen when fetching data
     if(isLoading){
         return(
-            <div>
-                Loading...
+            <div className="flex justify-center h-screen place-items-center  ">
+               
+                <PulseLoader/>
             </div>
+            
         )
     }
 
