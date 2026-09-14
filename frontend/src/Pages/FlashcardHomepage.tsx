@@ -3,8 +3,8 @@ import { supabase } from "../supabase.ts";
 import type { PostgrestError } from "@supabase/supabase-js";
 import type{ Json } from '../../database.types.ts';
 import { useNavigate } from "react-router";
-
-
+import Toolbar from "../components/toolbar.tsx";
+import { PulseLoader } from "react-spinners";
 type Flashcard = {
     front:string
     back:string
@@ -47,17 +47,20 @@ function SetPreviewComponent({length, set_name,flashSet }: SetPreviewProp){
         nativateTo('/flashcard',{state: flashSet})
     }
     return(
- 
-        <div className="bg-amber-400 hover:cursor-pointer" onClick={toFlashcardPage}>
-            <div className="flex-col overflow-hidden text-ellipsis text-white text-3xl">
-                <div>
+
+        <div className="bg-emerald-800 p-[0.85rem] border-emerald-800 hover:cursor-pointer hover:bg-emerald-900 hover:border-b-emerald-500 hover: border-b-8 rounded-xl" onClick={toFlashcardPage}>
+            <div className="flex-col overflow-hidden text-ellipsis text-white">
+                
+                <div className="font-medium">
                     {length} terms
                 </div>
-                <div>
+                <div className="font-semibold">
                     {set_name}
                 </div>
             </div>
         </div>
+    
+       
 
         
 
@@ -67,10 +70,9 @@ function SetPreviewComponent({length, set_name,flashSet }: SetPreviewProp){
 function FlashcardHomePage() {
  const[error, setError] = useState<PostgrestError>();
     const[flashData, setFlashData] = useState<data>([]);
-
+    const[isLoading, setIsLoading] = useState(true);
     
     useEffect(() => {
-        //displaying all the tests the user has made 
         async function fetchTest(){
             
             const {
@@ -92,7 +94,7 @@ function FlashcardHomePage() {
                 console.error("ERROR IN FETCHING DATA: ",error);
                 return;
             }
-
+            setIsLoading(false)
             setFlashData(data)
         }
         
@@ -100,13 +102,42 @@ function FlashcardHomePage() {
     }, [])
 
 
+    let navigate = useNavigate(); 
+    const toCreateFlashcardPage = () =>{ 
+        let path = `/create-flashcard`; 
+        navigate(path);
+    }
 
     // loading screen when fetching data
-    if(typeof flashData === 'undefined'){
-       return <div>loading</div>;
+    if(isLoading){
+        return(
+            <div className="flex justify-center h-screen place-items-center  ">
+               
+                <PulseLoader/>
+            </div>
+            
+        )
+    }
+
+    if(flashData.length === 0){
+        return(
+            <div className="px-50">
+                <div className="rounded-lg border border-dashed border-slate-300 bg-white p-8 text-center md:col-span-2 px-10">
+                                <h2 className="text-xl font-semibold">No flashcard set created yet</h2>
+                                <p className="mt-2 text-slate-600">Create a flashcard set?</p>
+                                <button className="mt-4 rounded-md bg-emerald-700 px-4 py-3 font-semibold text-white hover:bg-emerald-800 hover:cursor-pointer" onClick={toCreateFlashcardPage}>
+                                    Create flashcard set
+                                </button>
+                </div>
+            </div>
+        )
     }
 
 
+
+
+
+    // array to store preview of each flash set 
     const SetPreviewArr = flashData.map((flashSet)=>{
         const flashcardsArr = flashSet.flashcards as Flashcard[]
         const flashSetName = flashSet.set_name as string;
@@ -114,18 +145,33 @@ function FlashcardHomePage() {
             <SetPreviewComponent 
                 flashSet={flashSet}
                 length={ flashcardsArr.length }
-                set_name={flashSetName}
-
-                
+                set_name={flashSetName}               
             />
             
         );
     })
 
+
+    
+
     return(
-        <div className="flex flex-col gap-y-2">
-            {SetPreviewArr}
-        </div>
+        <>
+            
+            
+             <header>
+                <nav>
+                    <Toolbar/>
+                </nav>
+                <div className="font-bold text-4xl p-[0.85rem] ">
+                    Your Sets
+                </div>
+                
+            </header>
+            <div className="flex flex-col gap-y-2 m-2">
+                {SetPreviewArr}
+            </div>
+        </>
+       
     );
 
 }

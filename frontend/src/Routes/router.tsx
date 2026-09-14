@@ -16,6 +16,7 @@ import ProfilePage from '../Pages/ProfilePage'
 import FlashcardHomePage from '../Pages/FlashcardHomepage';
 
 import ProtectedRouter from '../Routes/protected_router'
+import NotFoundPage from '../Pages/PageNotFound';
 
 const routes = createBrowserRouter([
   {
@@ -29,6 +30,10 @@ const routes = createBrowserRouter([
   {
     path: "/forgot-password",
     element: <ForgotPasswordPage/>,
+  },
+  {
+    path:"*",
+    element: <NotFoundPage />
   },
   {
     element: <ProtectedRouter/>,

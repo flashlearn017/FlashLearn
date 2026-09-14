@@ -16,7 +16,7 @@ function SidebarItem ({icon, link, text}: SidebarProp){
         <li>
             <Link 
                 to={typeof link === 'undefined'? '': link}
-                className= {`flex p-[0.85rem] rounded-lg gap-[1em] hover:bg-purple-800 `} >
+                className= {`flex p-[0.85rem] rounded-lg gap-[1em] hover:bg-emerald-800 `} >
 
                     {icon}
                     <span>{text}</span>

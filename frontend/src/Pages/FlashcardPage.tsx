@@ -7,6 +7,8 @@ import { supabase } from '../supabase.ts';
 import { PostgrestError } from '@supabase/supabase-js';
 import { useNavigate } from "react-router";
 import { useLocation } from 'react-router';
+import Toolbar from '../components/toolbar.tsx';
+import { PulseLoader } from 'react-spinners';
 
 export default function CardDisplayPage() {
     return <CardDisplay/>
@@ -212,7 +214,41 @@ function CardDisplay() {
     const navigate = useNavigate();
     // get the flash data the user clicked from flashcard home page
     const {state} = useLocation();
+
+    const [isLoading, setIsLoading] = useState(true)
     const [selectedFlash,setSelected] = useState(state);
+
+    if(selectedFlash === null){
+        useEffect(() => {
+        async function fetchTest(){
+            
+            const {
+                data: {user},
+            }=await supabase.auth.getUser();
+
+            if(!user){
+                console.error("ERROR RETRIEVING USER: ", user);
+                return;
+            }
+
+            const { data, error} = await supabase
+                .from("Flashcard_Sets")
+                .select("id, set_name, flashcards")
+                .eq("user_id", user.id);
+            
+
+            if(error){
+                console.error("ERROR IN FETCHING DATA: ",error);
+                return;
+            }
+            setIsLoading(false)
+            selectedFlash(data)
+        }
+        
+        fetchTest()
+    }, [])
+    }
+
     
     shuffleCards(selectedFlash.flashcards);
    

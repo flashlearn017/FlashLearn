@@ -82,12 +82,15 @@ function Flashcard(){
             }
 
             // Navigate away
-            navigate("/flashcard")
+            navigate("/preview-flash")
     }
 
     return (
         <div className="min-h-screen bg-slate-50 text-slate-950">
-            <Toolbar/>
+            <div className="col-span-2">
+                <Toolbar/>
+            </div>
+
 
             <main className="mx-auto max-w-5xl px-4 py-10">
                 <div className="mx-auto w-full max-w-md rounded-lg border border-slate-200 bg-white p-6 shadow-sm">

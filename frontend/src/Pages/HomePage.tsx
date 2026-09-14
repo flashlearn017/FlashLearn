@@ -31,7 +31,7 @@ function Home(){
                         </div>
                         <button
                             className="mt-5 rounded-md bg-emerald-700 px-4 py-3 font-semibold text-white hover:bg-emerald-800"
-                            onClick={() => navigate("/flashcard")}
+                            onClick={() => navigate("/preview-flash")}
                         >
                             Open flashcards
                         </button>
