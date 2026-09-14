@@ -9,7 +9,7 @@ function Navbar(){
     const [isVisible, setIsVisible] = useState(false);
     return(
 
-        <nav className='grid col-span-2 bg-purple-950 text-white h-15 '>
+        <nav className='grid col-span-2 bg-emerald-700 text-white h-15 '>
             <ul className="flex items-center justify-between "
                 onClick={()=>{setIsVisible(!isVisible)}}>
 

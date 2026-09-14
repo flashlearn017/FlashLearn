@@ -6,16 +6,14 @@ import LogoutIcon from "../svg-icons/LogoutIcon";
 import SidebarItem from "./SidebarItem";
 import { useState } from "react";
 
-const hoverVariants = {
-    primary: 'hover: bg-purple-800 hover: text-white'
-}
+
 
 function Sidebar() {
     const [isCollapsed, setIsCollapsed] = useState(false);
 
     return(
 
-        <aside className={`bg-purple-950 ${isCollapsed ? 'w-13 overflow-hidden': 'w-60' } duration-200 ease-in-out `}>
+        <aside className={`bg-emerald-700 ${isCollapsed ? 'w-13 overflow-hidden': 'w-60' } duration-200 ease-in-out `}>
 
            <ul className='flex flex-col text-white list-none sticky top-0 '>
                     <SidebarItem

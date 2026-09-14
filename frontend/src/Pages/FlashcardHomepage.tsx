@@ -102,6 +102,11 @@ function FlashcardHomePage() {
     }, [])
 
 
+    let navigate = useNavigate(); 
+    const toCreateFlashcardPage = () =>{ 
+        let path = `/create-flashcard`; 
+        navigate(path);
+    }
 
     // loading screen when fetching data
     if(isLoading){
@@ -113,6 +118,23 @@ function FlashcardHomePage() {
             
         )
     }
+
+    if(flashData.length === 0){
+        return(
+            <div className="px-50">
+                <div className="rounded-lg border border-dashed border-slate-300 bg-white p-8 text-center md:col-span-2 px-10">
+                                <h2 className="text-xl font-semibold">No flashcard set created yet</h2>
+                                <p className="mt-2 text-slate-600">Create a flashcard set?</p>
+                                <button className="mt-4 rounded-md bg-emerald-700 px-4 py-3 font-semibold text-white hover:bg-emerald-800 hover:cursor-pointer" onClick={toCreateFlashcardPage}>
+                                    Create flashcard set
+                                </button>
+                </div>
+            </div>
+        )
+    }
+
+
+
 
 
     // array to store preview of each flash set 
@@ -128,6 +150,9 @@ function FlashcardHomePage() {
             
         );
     })
+
+
+    
 
     return(
         <>
