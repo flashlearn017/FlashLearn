@@ -106,7 +106,7 @@ function Test({test, testId}){
         }
 
         navigate(
-            `/results?score=${finalScore}${wrong.length > 0 ? `&wrong=${+ wrong.join(",")}` : ""}`
+            `/test-results?score=${finalScore}${wrong.length > 0 ? `&wrong=${wrong.join(",")}` : ""}`
         )
     }
 
